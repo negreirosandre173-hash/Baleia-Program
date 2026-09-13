@@ -1,7 +1,34 @@
 import flet as ft
-import sqlite3
 
 
+
+def on_change_telefone(e):
+    value = e.control.value
+    digits = "".join([c for c in value if c.isdigit()])
+    digits = digits[:11]
+    
+    new_val = ""
+    tam = len(digits)
+    
+    if tam <= 2:
+        new_val = f"({digits}" if tam > 0 else ""
+    elif tam <= 6:
+        new_val = f"({digits[:2]}) {digits[2:]}"
+    elif tam <= 10:
+        new_val = f"({digits[:2]}) {digits[2:6]}-{digits[6:]}"
+    else:
+        new_val = f"({digits[:2]}) {digits[2:7]}-{digits[7:]}"
+        
+    e.control.value = new_val
+    e.control.update()
+
+
+def validar_numeros(e):
+    
+    texto_limpo = "".join(c for c in e.control.value if c.isdigit())
+    if e.control.value != texto_limpo:
+        e.control.value = texto_limpo
+        e.control.update()
 
 def on_change_data(e):
 
@@ -18,6 +45,25 @@ def on_change_data(e):
         else:
             new_val = f"{digits[:2]}/{digits[2:4]}/{digits[4:8]}"
         e.control.value = new_val
+
+def on_change_custo(e):
+    value = e.control.value
+    
+    digits = "".join([c for c in value if c.isdigit()])
+    
+    if not digits:
+        e.control.value = ""
+        e.control.update()
+        return
+
+    integer_value = int(digits)
+    float_value = integer_value / 100
+    new_val = f"{float_value:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    
+    if value != new_val:
+        e.control.value = new_val
+        e.control.update()
+
         
 
 def janel1 (page: ft.Page, voltar):
@@ -45,19 +91,19 @@ def janel1 (page: ft.Page, voltar):
                                 ft.Row(
                                     controls=[
                                         ft.Text("Nome:",weight=ft.FontWeight.BOLD),
-                                        ft.Text("Código:",weight=ft.FontWeight.BOLD),
+                                        ft.Text("Código:", weight=ft.FontWeight.BOLD,),
                                     ], spacing=265
                                 ),
                                 ft.Row(
                                     controls=[
                                         ft.TextField( hint_text="Ex:Açúcar"),
-                                        ft.TextField( hint_text="Ex:123", width=90),
+                                        ft.TextField( hint_text="Ex:123", width=90, on_change=validar_numeros),
                                     ]
                                 ),
                                 ft.Row(
                                     controls=[
-                                        ft.Text("Quantidade:",weight=ft.FontWeight.BOLD),
-                                        ft.Text("Custo:",weight=ft.FontWeight.BOLD),
+                                        ft.Text("Quantidade:",weight=ft.FontWeight.BOLD, ),
+                                        ft.Text("Custo:",weight=ft.FontWeight.BOLD, ),
                                         ft.Text("Data:",weight=ft.FontWeight.BOLD),
 
 
@@ -69,10 +115,10 @@ def janel1 (page: ft.Page, voltar):
                                          options=[
                                          ft.dropdown.Option("KG"),
                                          ft.dropdown.Option("UNID"),
-                                          ft.dropdown.Option("ML")
+                                         ft.dropdown.Option("ML")
                                          ]
                                         ),
-                                        ft.TextField(hint_text="Ex:12,99", width=100),
+                                        ft.TextField(hint_text="Ex:12,99", width=100, on_change=on_change_custo),
                                         ft.TextField(
                                               hint_text="DD/MM/AAAA",
                                               width=150,
@@ -94,7 +140,7 @@ def janel1 (page: ft.Page, voltar):
                                 ft.Row(
                                     controls=[
                                         
-                                        ft.TextField(hint_text="(xx) xxxxx-xxxx", width=150),
+                                        ft.TextField(hint_text="(xx) xxxxx-xxxx", width=150, on_change=on_change_telefone),
                                         ft.TextField(hint_text="Ex: BaleiaPrograma173@gmail.com:", width=240)
                                  ]
                                 ),

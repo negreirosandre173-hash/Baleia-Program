@@ -3,6 +3,14 @@ import flet as ft
 
 coluna_insumos = ft.Column()
 
+def validar_numeros(e):
+    
+    texto_limpo = "".join(c for c in e.control.value if c.isdigit())
+    if e.control.value != texto_limpo:
+        e.control.value = texto_limpo
+        e.control.update()
+
+
 def adicionar_campo(e):
         nova_linha = ft.Row([
             ft.TextField(label="Insumo", width=200),
@@ -14,7 +22,7 @@ def adicionar_campo(e):
                   ft.dropdown.Option("ML")
       ] 
                  ),
-            ft.TextField(label="Qtd", width=80),
+            ft.TextField(label="Qtd", width=80, on_change=validar_numeros),
         ])
 
         coluna_insumos.controls.append(nova_linha)
@@ -47,7 +55,7 @@ def janel2(page: ft.Page, voltar):
                               ft.Row(
                                    controls=[
                                    ft.TextField(label="Nome:", hint_text="Ex: Cosmopolitan", width=320),
-                                   ft.TextField(label="Código", hint_text="Ex: 123...", width=120)
+                                   ft.TextField(label="Código", hint_text="Ex: 123...", width=120, on_change=validar_numeros)
                                    ]),
                               ft.Text("Insumos:"),
                               coluna_insumos, 

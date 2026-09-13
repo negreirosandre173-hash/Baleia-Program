@@ -32,7 +32,7 @@ def janel3(page: ft.Page, voltar):
                              ft.Divider(color=ft.Colors.WHITE),
                              ft.Row(
                                 controls=[
-                                    ft.ElevatedButton("Cancelar",on_click=voltar
+                                    ft.ElevatedButton("Cancelar", on_click=voltar
                                     )
                                 ], 
                                 alignment=ft.MainAxisAlignment.END,
