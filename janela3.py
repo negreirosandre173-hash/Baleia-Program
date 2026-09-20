@@ -1,6 +1,10 @@
 import flet as ft
 
 
+
+txt_buscar_produto= ft.TextField(hint_text="EX: Cosmopolitan")
+resultado_container=ft.Column()
+
 def janel3(page: ft.Page, voltar):
     return ft.Container(
         ft.Stack(
@@ -25,7 +29,7 @@ def janel3(page: ft.Page, voltar):
                             ft.Text("Nome do Produto", size=20, weight=ft.FontWeight.BOLD),
                             ft.Row(
                                 controls=[
-                            ft.TextField(hint_text="EX: Cosmopolitan"),
+                            txt_buscar_produto,
                             ft.ElevatedButton("Buscar")
                                 ]
                              ),
@@ -36,7 +40,9 @@ def janel3(page: ft.Page, voltar):
                                     )
                                 ], 
                                 alignment=ft.MainAxisAlignment.END,
-                             )
+                             ),
+
+
                             
                             
                                  ]

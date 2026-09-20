@@ -5,26 +5,8 @@ from database import obter_insumos, salvar_produto
 lista_referencias_insumos = []
 coluna_insumos = ft.Column()
 dados_banco = obter_insumos()
-sugestoes = [ft.AutoCompleteSuggestion(key=str(item), value=str(item)) for item in dados_banco]
+sugestoes = [ft.AutoCompleteSuggestion(key=item["nome"], value=item["nome"]) for item in dados_banco]
 
-def on_change_medida(e):
-    value = e.control.value
-    digits = "".join([c for c in value if c.isdigit()])
-    
-    if not digits:
-        e.control.value = ""
-        e.control.update()
-        return
-
-    integer_value = int(digits)
-   
-    if integer_value > 10000:
-        integer_value = 10000
-        digits = "10000"
-    
-    if value != digits:
-        e.control.value = digits
-        e.control.update()
 
 
 
@@ -46,7 +28,7 @@ def adicionar_campo(e):
         options=[ft.dropdown.Option("KG"), ft.dropdown.Option("UND"), ft.dropdown.Option("ML")],
         value=None
     )
-    nova_qtd = ft.TextField(label="QTD", width=80, on_change=on_change_medida)
+    nova_qtd = ft.TextField(label="QTD", width=80, on_change=validar_numeros)
     
     nova_linha = ft.Row([novo_insumo, nova_categoria, nova_qtd])
 
@@ -66,7 +48,7 @@ def salvar_dados(e):
     page = e.control.page
 
     produto_final = {
-        "nome": nome_produto.value,
+        "nome": nome_produto.value.upper(),
         "codigo": novo_codigo.value,
         "insumos": []
     }
@@ -75,18 +57,25 @@ def salvar_dados(e):
         nome_valor = insumo["nome"].value if insumo["nome"].value else ""
         
         if nome_valor:
+            id_insumo = None
+            for item in dados_banco:
+                if item["nome"] == nome_valor:
+                    id_insumo = item["id"]
+                    break
+            
+            insumo_identificador = id_insumo if id_insumo is not None else nome_valor
+            
             qtd_texto = insumo["qtd"].value if insumo["qtd"].value else "0"
-        
             qtd_limpa = qtd_texto.replace(",", ".")
             
             produto_final["insumos"].append({
-                "nome": nome_valor,
+                "insumo_id": insumo_identificador,  
                 "categoria": insumo["categoria"].value,
                 "quantidade": qtd_limpa
             })
     
-
     salvar_produto(produto_final)
+  
     nome_produto.value = ""
     novo_codigo.value = ""
     lista_referencias_insumos.clear()
@@ -97,7 +86,7 @@ def salvar_dados(e):
         label="categoria", 
         options=[ft.dropdown.Option("KG"), ft.dropdown.Option("UND"), ft.dropdown.Option("ML")]
     )
-    nova_qtd = ft.TextField(label="QTD", width=80, on_change= on_change_medida)
+    nova_qtd = ft.TextField(label="QTD", width=80, on_change=validar_numeros)
     
     lista_referencias_insumos.append({
         "nome": novo_nome,
@@ -110,6 +99,7 @@ def salvar_dados(e):
         page.update()
 
 
+
 def janel2(page: ft.Page, voltar):
 
     if not coluna_insumos.controls:
@@ -118,7 +108,7 @@ def janel2(page: ft.Page, voltar):
             label="categoria", 
             options=[ft.dropdown.Option("KG"), ft.dropdown.Option("UND"), ft.dropdown.Option("ML")]
         )
-        nova_qtd = ft.TextField(label="QTD", width=80, on_change=on_change_medida)
+        nova_qtd = ft.TextField(label="QTD", width=80, on_change=validar_numeros)
         
         lista_referencias_insumos.append({
             "nome": novo_nome,

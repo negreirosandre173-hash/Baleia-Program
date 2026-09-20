@@ -84,6 +84,8 @@ txt_uni_medi= ft.Dropdown(
                             )
 txt_custo= ft.TextField(hint_text="Ex: 12,99", width=205, on_change=on_change_custo)
 
+txt_qtd = ft.TextField(label="QTD", width=80, on_change=validar_numeros)
+
 txt_data=  ft.TextField(
                             hint_text="DD/MM/AAAA",
                             width=205,
@@ -105,16 +107,16 @@ lbl_status = ft.Text(value="", color=ft.Colors.GREEN)
 def enviar_clicado(e):
 
         page = e.page
-
         nome = txt_nome.value.upper() if txt_nome.value else ""
         codigo = txt_codigo.value
         uni_medi= txt_uni_medi.value
         custo = txt_custo.value
         data_cadastro= txt_data.value
-        fornecedor = txt_fornecedor.value
+        fornecedor = txt_fornecedor.value.upper()
         telefone = txt_telefone.value
         email = txt_email.value
         comentario = txt_comentario.value
+        quantidade = txt_qtd.value
 
 
         
@@ -130,7 +132,7 @@ def enviar_clicado(e):
             codigo_int = int(codigo)
 
 
-            salvar_no_banco(nome, codigo_int, uni_medi, custo_float, data_cadastro, fornecedor, telefone, email, comentario)
+            salvar_no_banco(nome, codigo_int, uni_medi, custo_float, data_cadastro, fornecedor, telefone, email, comentario, quantidade )
             lbl_status.value = "Insumo cadastrado!"
             lbl_status.color = ft.Colors.GREEN
             
@@ -144,6 +146,8 @@ def enviar_clicado(e):
             txt_telefone.value = ""
             txt_email.value = ""
             txt_comentario.value = ""
+            txt_codigo.value = ""
+            txt_qtd.value = ""
 
 
         except Exception as erro:
@@ -196,6 +200,7 @@ def janel1 (page: ft.Page, voltar):
                                     controls=[
                                         ft.Text("Medida:",weight=ft.FontWeight.BOLD, ),
                                         ft.Text("Custo:",weight=ft.FontWeight.BOLD, ),
+                                        ft.Text("quantidade:",weight=ft.FontWeight.BOLD, ),
                                         ft.Text("Data:",weight=ft.FontWeight.BOLD),
                                     ], spacing=70
                                 ),
@@ -203,6 +208,7 @@ def janel1 (page: ft.Page, voltar):
                                     controls=[
                                         txt_uni_medi,
                                         txt_custo,
+                                        txt_qtd,
                                         txt_data                                 
                                     ],
                                 ),
