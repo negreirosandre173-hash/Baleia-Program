@@ -99,13 +99,13 @@ def salvar_no_banco(nome, codigo, uni_medi, custo, data_cadastro, fornecedor, te
         preco_unitario = 0.0
 
     query = """
-    INSERT INTO insumos (nome, codigo, uni_medi, custo, data_cadastro, fornecedor, telefone, email, comentario, quantidade, preco_unitario)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+    INSERT INTO insumos (nome, codigo, uni_medi, custo, data_cadastro, fornecedor, telefone, email, comentario, quantidade )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     """
     try:
         with obter_conexao() as conexao:
             with conexao.cursor() as cursor:
-                cursor.execute(query, (nome, codigo, uni_medi, custo, data_cadastro, fornecedor, telefone, email, comentario, quantidade, preco_unitario))
+                cursor.execute(query, (nome, codigo, uni_medi, custo, data_cadastro, fornecedor, telefone, email, comentario, quantidade))
     except Exception as erro:
         print(f"Erro ao inserir insumo: {erro}")
         raise erro
@@ -148,91 +148,11 @@ def salvar_produto(produto_dados):
         print(f"Erro ao salvar produto no banco: {e}")
         raise e
 
-def calcular_custo_total_produto(codigo_produto):
-    
-    query = """
-        SELECT 
-            p.nome_produto,
-            SUM(CAST(p.nova_qtd AS REAL) * i.preco_unitario) AS custo_total
-        FROM produtos p
-        JOIN insumos i ON i.id = CAST(p.novo_insumo AS INTEGER)
-        WHERE CAST(p.novo_codigo AS VARCHAR) = %s
-        GROUP BY p.novo_codigo, p.nome_produto;
-    """
-    try:
-        with obter_conexao() as conexao:
-            with conexao.cursor() as cursor:
-                cursor.execute(query, (str(codigo_produto),))
-                resultado = cursor.fetchone()
-                
-                if resultado:
-                    return {
-                        "nome_produto": resultado[0],
-                        "custo_total": round(resultado[1], 4)
-                    }
-                return {"nome_produto": "Não encontrado", "custo_total": 0.0}
-    except Exception as e:
-        print(f"Erro ao calcular custo: {e}")
-        return {"nome_produto": "Erro no banco", "custo_total": 0.0}
 
 
 
 
-def buscar_produto(e):
 
-        resultado_container.controls.clear()
 
-        termo_busca = txt_busca.value.strip()
 
-        if not termo_busca:
-            resultado_container.controls.append(
-                ft.Text("Por favor, digite o nome de um produto.", color="red")
-            )
-            page.update()
-            return
 
-        conn = sqlite3.connect("produtos.db")
-        cursor = conn.cursor()
-
-        cursor.execute(
-            "SELECT id, nome, categoria, preco FROM produtos WHERE nome LIKE ?",
-            (f"%{termo_busca}%",),
-        )
-        produtos = cursor.fetchall()
-        conn.close()
-
-        if produtos:
-    
-            tabela = ft.DataTable(
-                columns=[
-                    ft.DataColumn(ft.Text("ID")),
-                    ft.DataColumn(ft.Text("Nome")),
-                    ft.DataColumn(ft.Text("Categoria")),
-                    ft.DataColumn(ft.Text("Preço (R$)")),
-                ],
-                rows=[],
-            )
-
-            
-            for prod in produtos:
-                tabela.rows.append(
-                    ft.DataRow(
-                        cells=[
-                            ft.DataCell(ft.Text(str(prod[0]))),
-                            ft.DataCell(ft.Text(prod[1])),
-                            ft.DataCell(ft.Text(prod[2])),
-                            ft.DataCell(
-                                ft.Text(f"{prod[3]:.2f}")
-                            ),  
-                        ]
-                    )
-                )
-
-            resultado_container.controls.append(tabela)
-        else:
-            resultado_container.controls.append(
-                ft.Text("Nenhum produto encontrado.", color="orange")
-            )
-
-        
-        page.update()
