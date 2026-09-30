@@ -1,8 +1,10 @@
 import flet as ft
-from janela1 import janel1
-from janela2 import janel2
-from janela3 import janel3
+from cadastrar_insumo import cadastrar_insumo
+from cadastrar_produto import cadastrar_produto
+from buscar_produto import buscar_produto
 from janela4 import janel4
+from editarproduto import editar_produto
+
 
 def main(page: ft.Page):
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
@@ -69,26 +71,16 @@ def main(page: ft.Page):
                 ),
                 #lista de compras
                 ft.Container(
-                    content=ft.Image(src="listvendas.jpeg", width=150, height=150),
+                    content=ft.Image(src="editarproduto.jpeg", width=150, height=150),
                     padding=13,
                     border_radius=10,
                     bgcolor=ft.Colors.BLUE,
-                    on_click=on_btn1_click,
+                    on_click=janela_editar_prooduto,
                     shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK),
                     left=300,  
                     top=220, 
                 ),
-                #fornecedores
-                ft.Container(
-                    content=ft.Image(src="forne.jpeg", width=150, height=150),
-                    padding=13,
-                    border_radius=10,
-                    bgcolor=ft.Colors.BLUE,
-                    on_click=on_btn1_click,
-                    shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK),
-                    left=510,  
-                    top=220, 
-                ),
+                
                 #sair
                 ft.Container(
                     content=ft.Image(src="sair.jpeg", width=150, height=150),
@@ -111,25 +103,37 @@ def main(page: ft.Page):
     #cadastro de insumo
     def abrir_vendas(e):
         page.clean()
-        conteudo_vendas = janel1(page, layout_principal)
+        conteudo_vendas =cadastrar_insumo(page, layout_principal)
         page.add(conteudo_vendas)
         page.update()
     #cadastro de produto
     def abrir_vendas1(e):
         page.clean()
-        conteudo_vendas = janel2(page, layout_principal)
+        conteudo_vendas = cadastrar_produto(page, layout_principal)
         page.add(conteudo_vendas)
         page.update()
     #buscar produto
     def abrir_vendas2(e):
         page.clean()
-        conteudo_vendas = janel3(page, layout_principal)
+        conteudo_vendas = buscar_produto(page, layout_principal)
         page.add(conteudo_vendas)
         page.update()
     #buscar insumo
     def abrir_vendas3(e):
         page.clean()
         conteudo_vendas = janel4(page, layout_principal)
+        page.add(conteudo_vendas)
+        page.update()
+    #editar produto
+    def abrir_vendas4(e):
+        page.clean()
+        conteudo_vendas = janel4(page, layout_principal)
+        page.add(conteudo_vendas)
+        page.update()
+
+    def janela_editar_prooduto():
+        page.clean()
+        conteudo_vendas = editar_produto(page, layout_principal)
         page.add(conteudo_vendas)
         page.update()
 

@@ -1,5 +1,5 @@
 import flet as ft
-from janela1 import on_change_custo
+from cadastrar_insumo import on_change_custo
 from database import obter_insumos, salvar_produto
 
 lista_referencias_insumos = []
@@ -17,7 +17,6 @@ def validar_numeros(e):
         e.control.update()
 
 nome_produto = ft.TextField(label="Nome Produto:", hint_text="Ex: Cosmopolitan", width=320)
-
 novo_codigo = ft.TextField(label="Código Produto", hint_text="Ex: 123...", width=120, on_change=validar_numeros)
 
 
@@ -100,7 +99,7 @@ def salvar_dados(e):
 
 
 
-def janel2(page: ft.Page, voltar):
+def cadastrar_produto(page: ft.Page, voltar):
 
     if not coluna_insumos.controls:
         novo_nome = ft.AutoComplete(suggestions=sugestoes, width=200)

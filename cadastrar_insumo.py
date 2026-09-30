@@ -1,10 +1,12 @@
 import flet as ft
 from database import salvar_no_banco
+from database import enviar_clicado
 
 
 #===============================================================
 
 def on_change_telefone(e):
+
     value = e.control.value
     digits = "".join([c for c in value if c.isdigit()])
     digits = digits[:11]
@@ -35,7 +37,6 @@ def validar_numeros(e):
 def on_change_data(e):
 
         value = e.control.value
-        
         digits = "".join([c for c in value if c.isdigit()])
         
        
@@ -51,8 +52,8 @@ def on_change_data(e):
         e.control.update()
 
 def on_change_custo(e):
+
     value = e.control.value
-    
     digits = "".join([c for c in value if c.isdigit()])
     
     if not digits:
@@ -100,65 +101,11 @@ txt_email=ft.TextField(hint_text="Ex: BaleiaPrograma173@gmail.com:", width=180)
 
 txt_comentario=ft.TextField(hint_text="Ex: Produto comprado com desconto", width=350)
 
+lbl_status = ft.Text(value="", color=ft.Colors.GREEN)
 #==========================================================================================
 
-lbl_status = ft.Text(value="", color=ft.Colors.GREEN)
 
-def enviar_clicado(e):
-
-        page = e.page
-        nome = txt_nome.value.upper() if txt_nome.value else ""
-        codigo = txt_codigo.value
-        uni_medi= txt_uni_medi.value
-        custo = txt_custo.value
-        data_cadastro= txt_data.value
-        fornecedor = txt_fornecedor.value.upper()
-        telefone = txt_telefone.value
-        email = txt_email.value
-        comentario = txt_comentario.value
-        quantidade = txt_qtd.value
-
-
-        
-        if not nome or not codigo or not uni_medi or not custo or not data_cadastro:
-            lbl_status.value = "Preencha os campos obrigatórios!"
-            lbl_status.color = ft.Colors.RED
-            page.update()
-            return
-
-        try:
-            custo_limpo = custo.replace(".","").replace(",", ".")
-            custo_float = float(custo_limpo)
-            codigo_int = int(codigo)
-
-
-            salvar_no_banco(nome, codigo_int, uni_medi, custo_float, data_cadastro, fornecedor, telefone, email, comentario, quantidade )
-            lbl_status.value = "Insumo cadastrado!"
-            lbl_status.color = ft.Colors.GREEN
-            
-            
-            txt_nome.value = ""
-            txt_codigo.value = ""
-            txt_uni_medi.value = None
-            txt_custo.value = ""
-            txt_data.value = ""
-            txt_fornecedor.value = ""
-            txt_telefone.value = ""
-            txt_email.value = ""
-            txt_comentario.value = ""
-            txt_codigo.value = ""
-            txt_qtd.value = ""
-
-
-        except Exception as erro:
-            lbl_status.value = f"Erro ao salvar: {erro}"
-            lbl_status.color = ft.Colors.RED
-
-        page.update()
-
-#=================================================================================================
-
-def janel1 (page: ft.Page, voltar):
+def cadastrar_insumo (page: ft.Page, voltar):
      return ft.Container( 
         ft.Stack(
            controls=[
@@ -243,7 +190,19 @@ def janel1 (page: ft.Page, voltar):
                                   content=ft.Row(
                                      controls=[
                                         ft.ElevatedButton("Cancelar", on_click=voltar),
-                                        ft.FilledButton("Salvar", on_click=enviar_clicado)
+                                        ft.FilledButton("Salvar", on_click=lambda e: enviar_clicado(
+                                                e,
+                                                txt_nome,
+                                                txt_codigo,
+                                                txt_uni_medi,
+                                                txt_custo,
+                                                txt_data,
+                                                txt_fornecedor,
+                                                txt_telefone,
+                                                txt_email,
+                                                txt_comentario,
+                                                txt_qtd,
+                                                lbl_status))
                                     ],                                     
                                       alignment=ft.CrossAxisAlignment.END
                                    ), padding=10
