@@ -111,14 +111,14 @@ def buscar_produto(page: ft.Page, voltar):
                             ft.Row(
                                 controls=[
                                     ft.Container(content=txt_buscar_produto, width=300),
-                                    ft.ElevatedButton("Buscar", on_click=realizar_busca)
+                                    ft.Button("Buscar", on_click=realizar_busca)
                                 ]
                             ),
                             ft.Container(content=resultado_container, expand=True),
                             ft.Divider(color=ft.Colors.WHITE, height=5),
                             ft.Row(
                                 controls=[
-                                    ft.ElevatedButton("Cancelar", on_click=voltar)
+                                    ft.Button("Cancelar", on_click=voltar)
                                 ], 
                                 alignment=ft.MainAxisAlignment.END,
                             ),

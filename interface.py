@@ -2,8 +2,10 @@ import flet as ft
 from cadastrar_insumo import cadastrar_insumo
 from cadastrar_produto import cadastrar_produto
 from buscar_produto import buscar_produto
-from janela4 import janel4
-from editarproduto import editar_produto
+from editar_produto import cadastrar_produto_editado
+from buscar_insumo import buscar_insumo
+
+
 
 
 def main(page: ft.Page):
@@ -31,7 +33,7 @@ def main(page: ft.Page):
                     padding=13,
                     border_radius=10,
                     bgcolor=ft.Colors.BLUE,
-                    on_click=abrir_vendas1,
+                    on_click=janela_cadastrar_produto,
                     shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK),
                     left=300,  
                     top=10, 
@@ -42,20 +44,20 @@ def main(page: ft.Page):
                     padding=13,
                     border_radius=10,
                     bgcolor=ft.Colors.BLUE,
-                    on_click=abrir_vendas2,
+                    on_click=janela_buscar_produto,
                     shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK),
                     left=510,  
                     top=10, 
                 ),
                 #cadastrar insumo
                 ft.Container(
-                    content=ft.Image(src="a1.jpeg", width=150, height=150),
+                    content=ft.Image(src="cadastrarinsumo.jpeg", width=150, height=150),
                     padding=13,
                     border_radius=10,
                     bgcolor=ft.Colors.BLUE,
-                    on_click=abrir_vendas,
+                    on_click=janela_cadastrar_insumo,
                     shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK),
-                    left=720,  
+                    left=930,  
                     top=10, 
                 ),
                 #buscar insumo
@@ -64,12 +66,12 @@ def main(page: ft.Page):
                     padding=13,
                     border_radius=10,
                     bgcolor=ft.Colors.BLUE,
-                    on_click=abrir_vendas3,
+                    on_click=janela_buscar_insumo,
                     shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK),
-                    left=930,  
-                    top=10, 
+                    left=300,  
+                    top=220, 
                 ),
-                #lista de compras
+                #editar produto
                 ft.Container(
                     content=ft.Image(src="editarproduto.jpeg", width=150, height=150),
                     padding=13,
@@ -77,7 +79,17 @@ def main(page: ft.Page):
                     bgcolor=ft.Colors.BLUE,
                     on_click=janela_editar_prooduto,
                     shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK),
-                    left=300,  
+                    left=720,  
+                    top=10, 
+                ),
+                ft.Container(
+                    content=ft.Image(src="editarinsumo.jpeg", width=150, height=150),
+                    padding=13,
+                    border_radius=10,
+                    bgcolor=ft.Colors.BLUE,
+                    on_click=janela_editar_insumo,
+                    shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK),
+                    left=510,  
                     top=220, 
                 ),
                 
@@ -101,46 +113,46 @@ def main(page: ft.Page):
       page.update()
 
     #cadastro de insumo
-    def abrir_vendas(e):
+    def janela_cadastrar_insumo(e):
         page.clean()
         conteudo_vendas =cadastrar_insumo(page, layout_principal)
         page.add(conteudo_vendas)
         page.update()
     #cadastro de produto
-    def abrir_vendas1(e):
+    def janela_cadastrar_produto(e):
         page.clean()
         conteudo_vendas = cadastrar_produto(page, layout_principal)
         page.add(conteudo_vendas)
         page.update()
     #buscar produto
-    def abrir_vendas2(e):
+    def janela_buscar_produto(e):
         page.clean()
         conteudo_vendas = buscar_produto(page, layout_principal)
         page.add(conteudo_vendas)
         page.update()
-    #buscar insumo
-    def abrir_vendas3(e):
-        page.clean()
-        conteudo_vendas = janel4(page, layout_principal)
-        page.add(conteudo_vendas)
-        page.update()
+        
     #editar produto
-    def abrir_vendas4(e):
-        page.clean()
-        conteudo_vendas = janel4(page, layout_principal)
-        page.add(conteudo_vendas)
-        page.update()
-
     def janela_editar_prooduto():
         page.clean()
-        conteudo_vendas = editar_produto(page, layout_principal)
+        conteudo_vendas = cadastrar_produto_editado(page, layout_principal)
         page.add(conteudo_vendas)
         page.update()
 
+    def janela_buscar_insumo():
+        page.clean()
+        conteudo_vendas = buscar_insumo(page, layout_principal)
+        page.add(conteudo_vendas)
+        page.update()
+
+    def janela_editar_insumo():
+        page.clean()
+        conteudo_vendas = cadastrar_insumo(page, layout_principal)
+        page.add(conteudo_vendas)
+        page.update()
     
      
     layout_principal()
     
     
 
-ft.app(target=main)
+ft.run(main)

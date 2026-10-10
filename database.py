@@ -126,7 +126,70 @@ def obter_produtos():
         print(f"Erro ao buscar produtos: {erro}")
         return []
 
+# Def que salva os dados do produto no db
 
+def salvar_dados(e, nome_produto,
+                    novo_codigo,
+                    lista_referencias_insumos,
+                    coluna_insumos,
+                    sugestoes,
+                    validar_numeros,
+                    dados_banco
+                    ):
+    page = e.control.page
+
+    produto_final = {
+        "nome": nome_produto.value.upper(),
+        "codigo": novo_codigo.value,
+        "insumos": []
+    }
+    
+    for insumo in lista_referencias_insumos:
+        nome_valor = insumo["nome"].value if insumo["nome"].value else ""
+        
+        if nome_valor:
+            id_insumo = None
+            for item in dados_banco:
+                if item["nome"] == nome_valor:
+                    id_insumo = item["id"]
+                    break
+            
+            insumo_identificador = id_insumo if id_insumo is not None else nome_valor
+            
+            qtd_texto = insumo["qtd"].value if insumo["qtd"].value else "0"
+            qtd_limpa = qtd_texto.replace(",", ".")
+            
+            produto_final["insumos"].append({
+                "insumo_id": insumo_identificador,  
+                "categoria": insumo["categoria"].value,
+                "quantidade": qtd_limpa
+            })
+    
+    salvar_produto(produto_final)
+  
+    nome_produto.value = ""
+    novo_codigo.value = ""
+    lista_referencias_insumos.clear()
+    coluna_insumos.controls.clear()
+    
+    novo_nome = ft.AutoComplete(suggestions=sugestoes, width=200)
+    nova_categoria = ft.Dropdown(
+        label="categoria", 
+        options=[ft.dropdown.Option("KG"), ft.dropdown.Option("UND"), ft.dropdown.Option("ML")]
+    )
+    nova_qtd = ft.TextField(label="QTD", width=80, on_change=validar_numeros)
+    
+    lista_referencias_insumos.append({
+        "nome": novo_nome,
+        "categoria": nova_categoria,
+        "qtd": nova_qtd
+    })
+    coluna_insumos.controls.append(ft.Row([novo_nome, nova_categoria, nova_qtd]))
+    
+    if page:
+        page.update()
+
+        
 # def responsavel pelos cadastros dos produtos
 def salvar_produto(produto_dados):
     query = """
@@ -194,7 +257,7 @@ def obter_nome_produto():
         print(f"deu erro:{e}")
         return []
 
-# ALTERAÇÃO: Agora a função é pura de banco, recebe o nome direto como texto string
+# def que deleta o produto
 def deletar_produto_por_nome(nome_produto):
     if not nome_produto:
         raise ValueError("Nenhum produto selecionado.")
@@ -206,3 +269,143 @@ def deletar_produto_por_nome(nome_produto):
             conexao.commit()
 
 
+# def edita o produto
+def salvar_produto_editado(produto_dados, nome_produto_antigo):
+    
+    query_buscar_codigo = "SELECT novo_codigo FROM produtos WHERE nome_produto = %s LIMIT 1;"
+    query_delete = "DELETE FROM produtos WHERE nome_produto = %s;"
+    
+    
+    query_insert = """
+    INSERT INTO produtos (nome_produto, novo_codigo, novo_insumo, nova_categoria, nova_qtd)
+    VALUES (%s, %s, %s, %s, %s);
+    """
+    try:
+        with obter_conexao() as conexao:
+            with conexao.cursor() as cursor:
+                cursor.execute(query_buscar_codigo, (nome_produto_antigo,))
+                resultado = cursor.fetchone()
+            
+                codigo_fixo = resultado[0] if resultado else 1
+                
+                cursor.execute(query_delete, (nome_produto_antigo,))
+                
+                for insumo in produto_dados["insumos"]:
+                    cursor.execute(query_insert, (
+                        produto_dados["nome"],         
+                        codigo_fixo,                   
+                        insumo["insumo_id"],           
+                        insumo["categoria"],           
+                        insumo["quantidade"]          
+                    ))
+        print('Produto atualizado com sucesso no banco!')
+        return True
+    except Exception as e:
+        print(f"Erro ao editar no banco: {e}")
+        raise e
+
+
+
+# def que traz os detalhes dos insumos
+def obter_detalhes_insumos(nome):
+
+        query = """
+            SELECT "uni_medi", "quantidade", "custo", "fornecedor", "telefone", "email", "comentario", "data_cadastro" 
+            FROM insumos 
+            WHERE "nome" = %s;
+        """
+        try:
+            with obter_conexao() as conexao:
+                with conexao.cursor() as cursor:
+                    cursor.execute(query, (nome,))
+                    return cursor.fetchall()
+        except Exception as e:
+            print(f"Erro ao buscar detalhes para {nome}: {e}")
+            return None
+
+# def que exclui os insumos
+def deletar_insumo_por_nome(nome):
+    if not nome:
+        raise ValueError("Nenhum produto selecionado.")
+
+    with obter_conexao() as conexao:
+        with conexao.cursor() as cursor:
+            sql_delete = "DELETE FROM insumos WHERE nome = %s"
+            cursor.execute(sql_delete, (nome,))
+            conexao.commit()
+
+# def que salva alteraçoes dos insumos
+def salvar_alteracoes_insumo(e, 
+                            txt_buscar_insumo, 
+                            nome_selecionado_insumo, 
+                            lbl_status, 
+                            txt_uni_medi,
+                            txt_qtd,
+                            txt_data,
+                            txt_fornecedor,
+                            txt_telefone,
+                            txt_email,
+                            txt_comentario,
+                            txt_custo
+
+                            ):
+    page = e.page
+   
+
+    nome_insumo = nome_selecionado_insumo if nome_selecionado_insumo else (txt_buscar_insumo.value.strip() if txt_buscar_insumo.value else "")
+
+    if not nome_insumo:
+        lbl_status.value = "Nenhum insumo selecionado para alteração!"
+        lbl_status.color = ft.Colors.RED
+        page.update()
+        return
+
+    try:
+        conn = obter_conexao()
+        cursor = conn.cursor() 
+        
+        cursor.execute("SELECT id FROM insumos WHERE nome = %s", (nome_insumo,))
+        insumo = cursor.fetchone()
+
+        if not insumo:
+            lbl_status.value = f"O insumo '{nome_insumo}' não foi encontrado no banco!"
+            lbl_status.color = ft.Colors.RED
+            cursor.close()
+            conn.close()
+            page.update()
+            return
+
+        insumo_id = insumo[0]
+
+        sql = """
+            UPDATE insumos 
+            SET uni_medi = %s, custo = %s, quantidade = %s, fornecedor = %s, 
+                telefone = %s, email = %s, comentario = %s, data_cadastro = %s
+            WHERE id = %s
+        """
+        
+        valores = (
+            txt_uni_medi.value, 
+            float(txt_custo.value.replace(",", ".") if txt_custo.value else 0), 
+            float(txt_qtd.value if txt_qtd.value else 0), 
+            txt_fornecedor.value,
+            txt_telefone.value, 
+            txt_email.value, 
+            txt_comentario.value,
+            txt_data.value,
+            insumo_id 
+        )
+        
+        cursor.execute(sql, valores)
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        lbl_status.value = ft.Text(f"Insumo atualizado!")
+        lbl_status.color = ft.Colors.GREEN
+        
+    except Exception as erro:
+        lbl_status.value = f"Preencha os campos: medida, custto, quantidade e data"
+        lbl_status.color = ft.Colors.RED
+    
+    page.update()

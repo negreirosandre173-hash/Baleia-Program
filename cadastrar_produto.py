@@ -1,13 +1,12 @@
 import flet as ft
 from cadastrar_insumo import on_change_custo
-from database import obter_insumos, salvar_produto
+from database import obter_insumos, salvar_produto, salvar_dados
+
 
 lista_referencias_insumos = []
 coluna_insumos = ft.Column()
 dados_banco = obter_insumos()
 sugestoes = [ft.AutoCompleteSuggestion(key=item["nome"], value=item["nome"]) for item in dados_banco]
-
-
 
 
 def validar_numeros(e):
@@ -41,61 +40,6 @@ def adicionar_campo(e):
 
     if coluna_insumos.page:
         coluna_insumos.update() 
-
-
-def salvar_dados(e):
-    page = e.control.page
-
-    produto_final = {
-        "nome": nome_produto.value.upper(),
-        "codigo": novo_codigo.value,
-        "insumos": []
-    }
-    
-    for insumo in lista_referencias_insumos:
-        nome_valor = insumo["nome"].value if insumo["nome"].value else ""
-        
-        if nome_valor:
-            id_insumo = None
-            for item in dados_banco:
-                if item["nome"] == nome_valor:
-                    id_insumo = item["id"]
-                    break
-            
-            insumo_identificador = id_insumo if id_insumo is not None else nome_valor
-            
-            qtd_texto = insumo["qtd"].value if insumo["qtd"].value else "0"
-            qtd_limpa = qtd_texto.replace(",", ".")
-            
-            produto_final["insumos"].append({
-                "insumo_id": insumo_identificador,  
-                "categoria": insumo["categoria"].value,
-                "quantidade": qtd_limpa
-            })
-    
-    salvar_produto(produto_final)
-  
-    nome_produto.value = ""
-    novo_codigo.value = ""
-    lista_referencias_insumos.clear()
-    coluna_insumos.controls.clear()
-    
-    novo_nome = ft.AutoComplete(suggestions=sugestoes, width=200)
-    nova_categoria = ft.Dropdown(
-        label="categoria", 
-        options=[ft.dropdown.Option("KG"), ft.dropdown.Option("UND"), ft.dropdown.Option("ML")]
-    )
-    nova_qtd = ft.TextField(label="QTD", width=80, on_change=validar_numeros)
-    
-    lista_referencias_insumos.append({
-        "nome": novo_nome,
-        "categoria": nova_categoria,
-        "qtd": nova_qtd
-    })
-    coluna_insumos.controls.append(ft.Row([novo_nome, nova_categoria, nova_qtd]))
-    
-    if page:
-        page.update()
 
 
 
@@ -132,13 +76,21 @@ def cadastrar_produto(page: ft.Page, voltar):
                             ft.Row(controls=[nome_produto, novo_codigo]),
                             ft.Text("Insumos:"),
                             coluna_insumos,
-                            ft.ElevatedButton("Adicionar Insumo", on_click=adicionar_campo),
+                            ft.Button("Adicionar Insumo", on_click=adicionar_campo),
                             ft.Divider(),
                             ft.Container(
                                 ft.Row(
                                     controls=[
-                                        ft.ElevatedButton("Cancelar", on_click=voltar),
-                                        ft.FilledButton("Salvar", on_click=salvar_dados) 
+                                        ft.Button("Cancelar", on_click=voltar),
+                                        ft.Button("Salvar",on_click=lambda e: salvar_dados(e, nome_produto,
+                                        novo_codigo,
+                                        lista_referencias_insumos,
+                                        coluna_insumos,
+                                        sugestoes,
+                                        validar_numeros,
+                                        dados_banco
+
+                                        ) )
                                     ],
                                     alignment=ft.MainAxisAlignment.END, 
                                 ),
