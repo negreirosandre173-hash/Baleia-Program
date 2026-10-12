@@ -4,6 +4,8 @@ from cadastrar_produto import cadastrar_produto
 from buscar_produto import buscar_produto
 from editar_produto import cadastrar_produto_editado
 from buscar_insumo import buscar_insumo
+from editar_insumo import editar_insumo
+from lista_de_compras import lista_de_compras
 
 
 
@@ -82,6 +84,7 @@ def main(page: ft.Page):
                     left=720,  
                     top=10, 
                 ),
+                # editar insumo
                 ft.Container(
                     content=ft.Image(src="editarinsumo.jpeg", width=150, height=150),
                     padding=13,
@@ -92,7 +95,20 @@ def main(page: ft.Page):
                     left=510,  
                     top=220, 
                 ),
+                # lista de compras
+                ft.Container(
+                    content=ft.Image(src="listadecompras.jpeg", width=150, height=150),
+                    padding=13,
+                    border_radius=10,
+                    bgcolor=ft.Colors.BLUE,
+                    on_click=janela_lista_de_compras,
+                    shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK),
+                    left=930,  
+                    top=220, 
+                ),
                 
+
+
                 #sair
                 ft.Container(
                     content=ft.Image(src="sair.jpeg", width=150, height=150),
@@ -137,19 +153,24 @@ def main(page: ft.Page):
         conteudo_vendas = cadastrar_produto_editado(page, layout_principal)
         page.add(conteudo_vendas)
         page.update()
-
+    # busca produto
     def janela_buscar_insumo():
         page.clean()
         conteudo_vendas = buscar_insumo(page, layout_principal)
         page.add(conteudo_vendas)
         page.update()
-
+    #edita o insumo
     def janela_editar_insumo():
         page.clean()
-        conteudo_vendas = cadastrar_insumo(page, layout_principal)
+        conteudo_vendas = editar_insumo(page, layout_principal)
         page.add(conteudo_vendas)
         page.update()
-    
+    #lista de compras
+    def janela_lista_de_compras():
+        page.clean()
+        conteudo_vendas = lista_de_compras(page, layout_principal)
+        page.add(conteudo_vendas)
+        page.update()
      
     layout_principal()
     

@@ -131,7 +131,7 @@ lbl_status = ft.Text(value="", color=ft.Colors.GREEN)
 
 # ==========================================================================================
 
-def cadastrar_insumo(page: ft.Page, voltar):
+def editar_insumo(page: ft.Page, voltar):
     return ft.Container( 
         ft.Stack(
             controls=[

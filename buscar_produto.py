@@ -66,7 +66,7 @@ def buscar_produto(page: ft.Page, voltar):
             else:
                 componentes_resultado.append(
                     ft.Container(
-                        padding=ft.padding.only(left=15, right=10),
+                        padding=ft.Padding(left=15, right=10, top=0, bottom=0),
                         content=ft.Row(
                             controls=[
                                 ft.Container(ft.Text(f"• {ingrediente}", size=14, color="black", weight=ft.FontWeight.W_500), width=180),

@@ -401,11 +401,37 @@ def salvar_alteracoes_insumo(e,
         cursor.close()
         conn.close()
 
-        lbl_status.value = ft.Text(f"Insumo atualizado!")
+        lbl_status.value = ft.Text("Insumo atualizado!")
         lbl_status.color = ft.Colors.GREEN
         
     except Exception as erro:
-        lbl_status.value = f"Preencha os campos: medida, custto, quantidade e data"
+        print('{erro}')
+        lbl_status.value = f"Preencha os campos: medida, custo, quantidade e data"
         lbl_status.color = ft.Colors.RED
     
     page.update()
+
+
+# def que realiza a lista de compras 
+def obter_custo_medio_insumo(nome_insumo):
+    conn = obter_conexao()
+    cursor = conn.cursor()
+    try:
+        query = """
+            SELECT ROUND(AVG(h.custo_novo), 2) AS custo_medio_historico
+            FROM insumos i
+            JOIN historico_custos_insumos h ON i.id = h.insumo_id
+            WHERE i.nome = %s
+            GROUP BY i.id, i.nome;
+        """
+        cursor.execute(query, (nome_insumo,))
+        resultado = cursor.fetchone()
+        
+        # Se achar o insumo, retorna a média, se não, retorna 0.0
+        return float(resultado[0]) if resultado else 0.0
+    except Exception as e:
+        print(f"Erro ao buscar custo médio: {e}")
+        return 0.0
+    finally:
+        cursor.close()
+        conn.close()
