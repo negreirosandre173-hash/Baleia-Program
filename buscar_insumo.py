@@ -100,7 +100,7 @@ txt_buscar_insumo = ft.AutoComplete(
     on_select=realizar_busca_insumo 
     )
 
-def buscar_insumo(page: ft.Page, voltar):
+def buscar_insumo(page: ft.Page):
     return ft.Container(
         ft.Stack(
             controls=[
@@ -122,7 +122,7 @@ def buscar_insumo(page: ft.Page, voltar):
                             ft.Text("Buscar Insumo", size=32, weight=ft.FontWeight.BOLD),
                             ft.Row(controls=[txt_buscar_insumo], alignment=ft.MainAxisAlignment.CENTER),
                             ft.Container(content=resultado_container, width=600, height=400, padding=0),
-                            ft.Button("Cancelar", on_click=voltar)
+                            ft.Button("Cancelar")
                             ],
                             horizontal_alignment=ft.CrossAxisAlignment.CENTER
                         ),

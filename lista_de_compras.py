@@ -61,7 +61,7 @@ def adicionar_campo(e):
     if coluna_insumos.page:
         coluna_insumos.update()
 
-def lista_de_compras(page: ft.Page, voltar):
+def lista_de_compras(page: ft.Page):
     if not coluna_insumos.controls:
         texto_medio_inicial = ft.Text("Média: R$ 0.00", size=12, color=ft.Colors.GREY_600)
         
@@ -123,7 +123,7 @@ def lista_de_compras(page: ft.Page, voltar):
                             ft.Container(
                                 ft.Row(
                                     controls=[
-                                        ft.Button("Cancelar", on_click=voltar),
+                                        ft.Button("Cancelar",),
                                         ft.IconButton(
                                             icon=ft.Icons.PRINT,
                                             icon_color=ft.Colors.BLUE,

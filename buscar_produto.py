@@ -4,7 +4,7 @@ from database import obter_detalhes_receita_view, obter_todos_produtos
 txt_buscar_produto = None
 resultado_container = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
 
-def buscar_produto(page: ft.Page, voltar):
+def buscar_produto(page: ft.Page):
     global txt_buscar_produto
 
     dados_produtos = obter_todos_produtos()
@@ -118,7 +118,7 @@ def buscar_produto(page: ft.Page, voltar):
                             ft.Divider(color=ft.Colors.WHITE, height=5),
                             ft.Row(
                                 controls=[
-                                    ft.Button("Cancelar", on_click=voltar)
+                                    ft.Button("Cancelar")
                                 ], 
                                 alignment=ft.MainAxisAlignment.END,
                             ),

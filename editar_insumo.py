@@ -131,7 +131,7 @@ lbl_status = ft.Text(value="", color=ft.Colors.GREEN)
 
 # ==========================================================================================
 
-def editar_insumo(page: ft.Page, voltar):
+def editar_insumo(page: ft.Page):
     return ft.Container( 
         ft.Stack(
             controls=[
@@ -197,7 +197,7 @@ def editar_insumo(page: ft.Page, voltar):
                                 content=ft.Row(
                                     controls=[
                                         ft.Button("Excluir", on_click=clicar_deletar),
-                                        ft.Button("Cancelar", on_click=voltar),
+                                        ft.Button("Cancelar"),
                                         ft.Button("Salvar", on_click=lambda e: salvar_alteracoes_insumo(
                                         e, 
                                         txt_buscar_insumo, 

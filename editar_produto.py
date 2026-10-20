@@ -81,7 +81,7 @@ def validar_numeros(e):
 nome_produto = txt_buscar_nome_produto
 
 
-def cadastrar_produto_editado(page: ft.Page, voltar):
+def cadastrar_produto_editado(page: ft.Page):
 
     if not coluna_insumos.controls:
         novo_nome = ft.AutoComplete(suggestions=sugestoes, width=200)
@@ -121,7 +121,7 @@ def cadastrar_produto_editado(page: ft.Page, voltar):
                                 ft.Row(
                                     controls=[
                                         ft.Button("excluir" ,on_click=clicar_deletar),
-                                        ft.Button("Cancelar", on_click=voltar),
+                                        ft.Button("Cancelar"),
                                         ft.Button("Salvar", on_click=disparar_salvamento) 
                                     ],
                                     alignment=ft.MainAxisAlignment.END, 

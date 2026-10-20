@@ -435,3 +435,27 @@ def obter_custo_medio_insumo(nome_insumo):
     finally:
         cursor.close()
         conn.close()
+
+# def que busca o preço dos insumos para o calculo de estoque
+
+def obter_preco_insumos():
+    # Adicionado o campo preco_unitario na consulta SQL
+    comando_sql = "SELECT id, nome, preco_unitario, quantidade  FROM insumos;"
+    try:
+        with obter_conexao() as conexao:
+            with conexao.cursor() as cursor:
+                cursor.execute(comando_sql)
+                resultados = cursor.fetchall()
+               
+                # Mapeia a linha[2] para a chave "preco_unitario"
+                return [
+                    {
+                        "id": linha[0], 
+                        "nome": linha[1], 
+                        "preco_unitario": linha[2],
+                        "quantidade": linha[3]
+                    } for linha in resultados
+                ]
+    except Exception as erro:
+        print(f"Erro ao buscar insumos: {erro}")
+        return []

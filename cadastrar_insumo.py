@@ -105,18 +105,17 @@ lbl_status = ft.Text(value="", color=ft.Colors.GREEN)
 #==========================================================================================
 
 
-def cadastrar_insumo (page: ft.Page, voltar):
+def cadastrar_insumo (page: ft.Page):
      return ft.Container( 
         ft.Stack(
            controls=[
-              ft.Image(src="desfoque.png", expand=True, filter_quality=ft.FilterQuality.LOW),
               ft.Container(
                 height=600,
                 width=600,
                 padding=20,
                 bgcolor="white",
                 top= 60,
-                left=400,
+                left=300,
                 border_radius=10,
                 shadow=ft.BoxShadow(
                      spread_radius=1,blur_radius=10,color=ft.Colors.BLACK,
@@ -191,7 +190,7 @@ def cadastrar_insumo (page: ft.Page, voltar):
                                 ft.Container(
                                   content=ft.Row(
                                      controls=[
-                                        ft.Button("Cancelar", on_click=voltar),
+                                        ft.Button("Cancelar"),
                                         ft.Button("Salvar", on_click=lambda e: enviar_clicado(
                                                 e,
                                                 txt_nome,

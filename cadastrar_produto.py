@@ -43,7 +43,7 @@ def adicionar_campo(e):
 
 
 
-def cadastrar_produto(page: ft.Page, voltar):
+def cadastrar_produto(page: ft.Page):
 
     if not coluna_insumos.controls:
         novo_nome = ft.AutoComplete(suggestions=sugestoes, width=200)
@@ -81,7 +81,7 @@ def cadastrar_produto(page: ft.Page, voltar):
                             ft.Container(
                                 ft.Row(
                                     controls=[
-                                        ft.Button("Cancelar", on_click=voltar),
+                                        ft.Button("Cancelar"),
                                         ft.Button("Salvar",on_click=lambda e: salvar_dados(e, nome_produto,
                                         novo_codigo,
                                         lista_referencias_insumos,
