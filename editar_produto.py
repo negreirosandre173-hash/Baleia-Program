@@ -20,7 +20,7 @@ sugestoes_nome_autocomplete = [
 ]
 
 txt_buscar_nome_produto = ft.AutoComplete(
-    suggestions=sugestoes_nome_autocomplete,width=200
+    suggestions=sugestoes_nome_autocomplete,width=720
 )
 
 def clicar_deletar(e):
@@ -80,59 +80,31 @@ def validar_numeros(e):
 
 nome_produto = txt_buscar_nome_produto
 
-
-def cadastrar_produto_editado(page: ft.Page):
-
-    if not coluna_insumos.controls:
-        novo_nome = ft.AutoComplete(suggestions=sugestoes, width=200)
-        nova_categoria = ft.Dropdown(
-            label="categoria", 
-            options=[ft.dropdown.Option("KG"), ft.dropdown.Option("UND"), ft.dropdown.Option("ML")]
-        )
-        nova_qtd = ft.TextField(label="QTD", width=80, on_change=validar_numeros)
-        
-        lista_referencias_insumos.append({
-            "nome": novo_nome,
-            "categoria": nova_categoria,
-            "qtd": nova_qtd
-        })
-        coluna_insumos.controls = [ft.Row([novo_nome, nova_categoria, nova_qtd])]
-
-    return ft.Container(
-        ft.Stack(
-            controls=[
-                ft.Image(src="desfoque.png", expand=True, filter_quality=ft.FilterQuality.LOW),
-                ft.Container(
-                    width=550, height=600, bgcolor="white", padding=20, border_radius=10, top=30, left=400,
-                    shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK, offset=ft.Offset(0,1)),
-                    content=ft.Column(
-                        scroll=ft.ScrollMode.ALWAYS,
-                        controls=[
-                            ft.Text("Editar Produto", size=35, weight=ft.FontWeight.BOLD),
-                            ft.Divider(height=10, thickness=1, color=ft.Colors.BLUE),
-                            ft.Text("Selecionar Produto", weight=ft.FontWeight.BOLD),
-                            ft.Row(controls=[nome_produto ]),
-                            ft.Text("Insumos:"),
-                            coluna_insumos,
-                            ft.Button("Adicionar Insumo", on_click=adicionar_campo),
-                            ft.Divider(),
-                            ft.Container(content=resultado_container),
-                            ft.Container(
-                                ft.Row(
-                                    controls=[
-                                        ft.Button("excluir" ,on_click=clicar_deletar),
-                                        ft.Button("Cancelar"),
-                                        ft.Button("Salvar", on_click=disparar_salvamento) 
-                                    ],
-                                    alignment=ft.MainAxisAlignment.END, 
-                                ),
-                            )
-                        ]
-                    )
-                ),
-            ],
-        )
+def adicionar_campo(e):
+    novo_insumo = ft.AutoComplete(suggestions=sugestoes, width=300)
+    nova_categoria = ft.Dropdown(
+        width=280,
+        label="categoria", 
+        options=[ft.dropdown.Option("KG"), ft.dropdown.Option("UND"), ft.dropdown.Option("ML")],
+        value=None
     )
+    nova_qtd = ft.TextField(label="QTD", width=280, on_change=validar_numeros)
+    
+    nova_linha = ft.Row([novo_insumo, nova_categoria, nova_qtd])
+
+    lista_referencias_insumos.append({
+        "nome": novo_insumo,
+        "categoria": nova_categoria,
+        "qtd": nova_qtd,
+        
+
+    })
+    
+    coluna_insumos.controls.append(nova_linha)
+
+    if coluna_insumos.page:
+        coluna_insumos.update() 
+
 
 
 def disparar_salvamento(e):
@@ -201,5 +173,125 @@ def disparar_salvamento(e):
         ]
         if page:
             page.update()
+
+
+btn_salvar = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=disparar_salvamento,
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.SAVE, color="white"),
+            ft.Text("Salvar", color="white")
+        ]
+    )
+)
+
+btn_excluir_dados = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=clicar_deletar,
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.DELETE_FOREVER, color="white"),
+            ft.Text("Excluir", color="white")
+        ]
+    )
+)
+
+btn_adicionar = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=adicionar_campo,
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.ADD, color="white"),
+            ft.Text("Adicionar Insumos", color="white")
+        ]
+    )
+)
+
+
+
+def cadastrar_produto_editado(page: ft.Page):
+
+    if not coluna_insumos.controls:
+        novo_nome = ft.AutoComplete(suggestions=sugestoes, width=300)
+        nova_categoria = ft.Dropdown(
+            width=280,
+            label="categoria", 
+            options=[ft.dropdown.Option("KG"), ft.dropdown.Option("UND"), ft.dropdown.Option("ML")]
+        )
+        nova_qtd = ft.TextField(label="QTD", width=280, on_change=validar_numeros)
+        
+        lista_referencias_insumos.append({
+            "nome": novo_nome,
+            "categoria": nova_categoria,
+            "qtd": nova_qtd
+        })
+        coluna_insumos.controls = [ft.Row([novo_nome, nova_categoria, nova_qtd])]
+
+    return ft.Container(
+        ft.Stack(
+            controls=[
+                ft.Container(
+                    width=920, height=640, bgcolor="white", padding=20, border_radius=10, top=20, left=40,
+                    shadow=ft.BoxShadow(spread_radius=1, blur_radius=3, color=ft.Colors.GREY, offset=ft.Offset(1,1)),
+                    content=ft.Column(
+                        scroll=ft.ScrollMode.ALWAYS,
+                        controls=[
+                            ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.ASSIGNMENT_SHARP, color="#1E3A8A", size=50),
+                                    ft.Text("Editar Produto", size=28),
+                                ]
+                            ),
+                            ft.Row(controls=[
+                                ft.Container(
+                                             content=ft.Row(
+                                                controls=[
+                                                    ft.Icon(ft.Icons.SEARCH, color=ft.Colors.BLUE, size=25, margin=20),
+                                                    nome_produto
+                                                ],spacing=30
+                                             ),
+                                             width=880,
+                                             height=60,
+                                             border_radius=10,
+                                             border=ft.Border.all(width=1, color=ft.Colors.GREY),),
+                                             ]),
+                            ft.Text("Insumos:"),
+                            coluna_insumos,
+                            btn_adicionar,
+                            ft.Container(content=resultado_container),
+                            ft.Container(
+                                ft.Row(
+                                    controls=[
+                                        btn_excluir_dados,
+                                        btn_salvar,
+                                    ],
+                                    alignment=ft.MainAxisAlignment.END, 
+                                ),
+                            )
+                        ]
+                    )
+                ),
+            ],
+        )
+    )
+
+
+
 
 

@@ -15,18 +15,18 @@ def validar_numeros(e):
         e.control.value = texto_limpo
         e.control.update()
 
-nome_produto = ft.TextField(label="Nome Produto:", hint_text="Ex: Cosmopolitan", width=320)
-novo_codigo = ft.TextField(label="Código Produto", hint_text="Ex: 123...", width=120, on_change=validar_numeros)
+nome_produto = ft.TextField(hint_text="Ex: Cosmopolitan", width=920)
 
 
 def adicionar_campo(e):
-    novo_insumo = ft.AutoComplete(suggestions=sugestoes, width=200)
+    novo_insumo = ft.AutoComplete(suggestions=sugestoes, width=300)
     nova_categoria = ft.Dropdown(
+        width=300,
         label="categoria", 
         options=[ft.dropdown.Option("KG"), ft.dropdown.Option("UND"), ft.dropdown.Option("ML")],
         value=None
     )
-    nova_qtd = ft.TextField(label="QTD", width=80, on_change=validar_numeros)
+    nova_qtd = ft.TextField(hint_text="Ex: 1000", width=300, on_change=validar_numeros)
     
     nova_linha = ft.Row([novo_insumo, nova_categoria, nova_qtd])
 
@@ -43,15 +43,53 @@ def adicionar_campo(e):
 
 
 
+btn_salvar = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=lambda e: salvar_dados(e, nome_produto,
+                                        lista_referencias_insumos,
+                                        coluna_insumos,
+                                        sugestoes,
+                                        validar_numeros,
+                                        dados_banco),
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.SAVE, color="white"),
+            ft.Text("Salvar", color="white")
+        ]
+    )
+)
+
+btn_adiconar_insumo = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=adicionar_campo,
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.ADD, color="white"),
+            ft.Text("Adicionar Insumo", color="white")
+        ]
+    )
+)
+
 def cadastrar_produto(page: ft.Page):
 
     if not coluna_insumos.controls:
-        novo_nome = ft.AutoComplete(suggestions=sugestoes, width=200)
+        novo_nome = ft.AutoComplete(suggestions=sugestoes, width=300)
         nova_categoria = ft.Dropdown(
+            width=300,
             label="categoria", 
             options=[ft.dropdown.Option("KG"), ft.dropdown.Option("UND"), ft.dropdown.Option("ML")]
         )
-        nova_qtd = ft.TextField(label="QTD", width=80, on_change=validar_numeros)
+        nova_qtd = ft.TextField(hint_text="Ex: 1000", width=300, on_change=validar_numeros)
         
         lista_referencias_insumos.append({
             "nome": novo_nome,
@@ -63,35 +101,41 @@ def cadastrar_produto(page: ft.Page):
     return ft.Container(
         ft.Stack(
             controls=[
-                ft.Image(src="desfoque.png", expand=True, filter_quality=ft.FilterQuality.LOW),
                 ft.Container(
-                    width=550, height=600, bgcolor="white", padding=20, border_radius=10, top=30, left=400,
-                    shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK, offset=ft.Offset(0,1)),
+                    height=640,
+                    width=960, 
+                    bgcolor="white", 
+                    padding=20, 
+                    border_radius=10, top=20, left=40,
+                    shadow=ft.BoxShadow(spread_radius=1, blur_radius=3, color=ft.Colors.GREY, offset=ft.Offset(0,1)),
                     content=ft.Column(
                         scroll=ft.ScrollMode.ALWAYS,
                         controls=[
-                            ft.Text("Cadastro de Produto", size=35, weight=ft.FontWeight.BOLD),
-                            ft.Divider(height=10, thickness=1, color=ft.Colors.BLUE),
-                            ft.Text("Informações Básicas", weight=ft.FontWeight.BOLD),
-                            ft.Row(controls=[nome_produto, novo_codigo]),
-                            ft.Text("Insumos:"),
+                            ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.ASSIGNMENT_SHARP, color="#1E3A8A", size=50),
+                                    ft.Text("Cadastro de Produto", size=28),
+                                ]
+                            ),
+                            ft.Divider(),
+                            ft.Column(controls=[
+                                ft.Text("Nome:", weight=ft.FontWeight.BOLD, ),
+                                nome_produto]),
+                            ft.Row(
+                                controls=[
+                                    ft.Text("Insumos:", weight=ft.FontWeight.BOLD, width=300),
+                                    ft.Text("Unidade:", weight=ft.FontWeight.BOLD,width=300),
+                                    ft.Text("Quantidade:", weight=ft.FontWeight.BOLD,width=300)
+                                ]
+                            ),
                             coluna_insumos,
-                            ft.Button("Adicionar Insumo", on_click=adicionar_campo),
+                            btn_adiconar_insumo,
                             ft.Divider(),
                             ft.Container(
                                 ft.Row(
-                                    controls=[
-                                        ft.Button("Cancelar"),
-                                        ft.Button("Salvar",on_click=lambda e: salvar_dados(e, nome_produto,
-                                        novo_codigo,
-                                        lista_referencias_insumos,
-                                        coluna_insumos,
-                                        sugestoes,
-                                        validar_numeros,
-                                        dados_banco
-
-                                        ) )
-                                    ],
+                                        controls=[
+                                        btn_salvar
+                                        ],
                                     alignment=ft.MainAxisAlignment.END, 
                                 ),
                             )

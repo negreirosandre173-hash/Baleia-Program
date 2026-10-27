@@ -1,6 +1,6 @@
 import os
 import subprocess
-from datetime import datetime  # IMPORTANTE: Adicione este import no topo
+from datetime import datetime  
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -28,17 +28,18 @@ def gerar_pdf_lista_compras(lista_referencias):
     elementos.append(Paragraph(texto_subtitulo, estilo_subtitulo))
     elementos.append(Spacer(1, 20))  
     
-    dados_tabela = [["INSUMO", "QUANTIDADE", "CUSTO MÉDIO"]]
+    dados_tabela = [["INSUMO", "QUANTIDADE","UNIDADE", "CUSTO MÉDIO"]]
     
     for item in lista_referencias:
         nome = item["nome"].value  
         qtd = item["qtd"].value  
+        unid = item["unid"].value
         
         if nome and qtd:
             custo_medio = obter_custo_medio_insumo(nome)
-            dados_tabela.append([nome, str(qtd), f"R$ {custo_medio:.2f}"])
+            dados_tabela.append([nome, str(qtd), str(unid), f"R$ {custo_medio:.2f}"])
             
-    tabela = Table(dados_tabela, colWidths=[272, 150, 150])
+    tabela = Table(dados_tabela, colWidths=[200, 120, 120, 120])
     
     tabela.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#1E3A8A")), 

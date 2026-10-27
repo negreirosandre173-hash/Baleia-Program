@@ -1,6 +1,6 @@
 import flet as ft
 from database import obter_conexao, obter_insumos, obter_detalhes_insumos, deletar_insumo_por_nome, salvar_alteracoes_insumo 
-from cadastrar_insumo import on_change_telefone, validar_numeros, on_change_data, on_change_custo
+from cadastrar_insumo import on_change_telefone, validar_numeros, on_change_custo
 
 nome_selecionado_insumo = ""
 resultado_container = ft.Column()
@@ -10,6 +10,35 @@ sugestoes_autocomplete_insumos = [
     ft.AutoCompleteSuggestion(key=nome["nome"], value=nome["nome"]) 
     for nome in dados_insumos
 ]
+
+btn_salvar = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=lambda e: salvar_alteracoes_insumo(
+                                        e, 
+                                        txt_buscar_insumo, 
+                                        nome_selecionado_insumo, 
+                                        lbl_status, 
+                                        txt_uni_medi,
+                                        txt_qtd,
+                                        txt_fornecedor,
+                                        txt_telefone,
+                                        txt_email,
+                                        txt_comentario,
+                                        txt_custo
+                                        ),
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.SAVE, color="white"),
+            ft.Text("Salvar", color="white")
+        ]
+    )
+)
+
 
 def realizar_busca_insumo(e):
     global nome_selecionado_insumo
@@ -30,17 +59,32 @@ def realizar_busca_insumo(e):
     componentes_resultado = [
         ft.Row(
             controls=[
-                ft.Text(f"SELECIONADO: {nome_selecionado_insumo.upper()}", size=16, weight="bold", color="green"),
-            ], alignment=ft.MainAxisAlignment.CENTER
-        ),
-    ]
+                ft.Container(
+                    width=920,
+                    height=60,
+                    border_radius=10,
+                    bgcolor="#1E3A8A",
+                        content=ft.Column(
+                            controls=[
+                                ft.Container(height=10),
+                                ft.Row(
+                                    controls=[
+                                        ft.Text(f"SELECIONADO: {nome_selecionado_insumo.upper()}", size=16, color="white",),
+                                            ], alignment=ft.MainAxisAlignment.CENTER
+                                        )
+                                    ]
+                                )
+                            ),
+                        ], margin=0
+                    )
+                ]
             
     resultado_container.controls = componentes_resultado
     page.update() 
     
 txt_buscar_insumo = ft.AutoComplete(
     suggestions=sugestoes_autocomplete_insumos,
-    width=400,
+    width=620,
     on_select=realizar_busca_insumo 
 )
 
@@ -56,11 +100,38 @@ def buscar_insumo():
         ft.Stack(
             controls=[
                 ft.Container(
+                    padding=0,
                     content=ft.Column(
                         controls=[
-                            ft.Row(controls=[ft.Container(width=60), ft.Text("Editar Insumo", size=32, weight=ft.FontWeight.BOLD)], alignment=ft.MainAxisAlignment.CENTER),
-                            ft.Row(controls=[txt_buscar_insumo], alignment=ft.MainAxisAlignment.CENTER),
-                            ft.Row(controls=[ft.Container(width=60), (resultado_container)], alignment=ft.MainAxisAlignment.CENTER),
+                            ft.Row(
+                                    controls=[
+                                        ft.Icon(ft.Icons.ASSIGNMENT_SHARP, color="#1E3A8A", size=50),
+                                        ft.Column(
+                                            
+                                            controls=[
+                                                ft.Text("Editar Insumo", size=28),
+                                                ft.Text("Mantenha seu estoque sempre atualizado!", size=13),
+                                            ], spacing=0, alignment=ft.MainAxisAlignment.START
+                                        ),
+                                    ], spacing = 20
+                                ),
+                            ft.Row(controls=[
+                            ft.Container(
+                                    width=920,
+                                    height=60,
+                                    border_radius=10,
+                                    border=ft.Border.all(width=1, color=ft.Colors.GREY),
+                                    content=ft.Row(
+                                        controls=[
+                                            ft.Icon(ft.Icons.SEARCH, color=ft.Colors.BLUE, size=25, margin=10),
+                                            ft.Row(controls=[txt_buscar_insumo], alignment=ft.MainAxisAlignment.CENTER),
+                                                ], spacing=80
+                                            )
+                                        ),
+                                        ]
+                                    ),
+                            ft.Container(height=10),
+                            ft.Row(controls=[(resultado_container)], alignment=ft.MainAxisAlignment.CENTER),
                         ],
                     ),
                 )   
@@ -103,6 +174,23 @@ def clicar_deletar(e):
         ]
     page.update()
 
+
+btn_excluir = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click= clicar_deletar,
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.DELETE, color="white"),
+            ft.Text("Deletar", color="white")
+        ]
+    )
+)
+
 # ======================================================= 
 
 txt_uni_medi = ft.Dropdown(   
@@ -110,22 +198,17 @@ txt_uni_medi = ft.Dropdown(
         ft.dropdown.Option("KG"),
         ft.dropdown.Option("UNID"),
         ft.dropdown.Option("ML")
-    ], width=180
+    ], width=300
 )
-txt_custo = ft.TextField(hint_text="Ex: 12,99", width=180, on_change=on_change_custo)
-txt_qtd = ft.TextField(label="QTD", width=180, on_change=validar_numeros)
+txt_custo = ft.TextField(hint_text="Ex: 12,99", width=300, on_change=on_change_custo)
+txt_qtd = ft.TextField(label="QTD", width=300, on_change=validar_numeros)
 
-txt_data = ft.TextField(
-    hint_text="DD/MM/AAAA",
-    width=180,
-    keyboard_type=ft.KeyboardType.NUMBER,
-    on_change=on_change_data
-)
 
-txt_fornecedor = ft.TextField(hint_text="Ex: BaleiaLtda", width=180)
-txt_telefone = ft.TextField(hint_text="(61) 9 9999-9999 ", width=180, on_change=on_change_telefone)
-txt_email = ft.TextField(hint_text="Ex: BaleiaPrograma173@gmail.com:", width=180)
-txt_comentario = ft.TextField(hint_text="Ex: Produto comprado com desconto", width=360)
+
+txt_fornecedor = ft.TextField(hint_text="Ex: BaleiaLtda", width=300)
+txt_telefone = ft.TextField(hint_text="(61) 9 9999-9999 ", width=300, on_change=on_change_telefone)
+txt_email = ft.TextField(hint_text="Ex: BaleiaPrograma173@gmail.com:", width=300)
+txt_comentario = ft.TextField(hint_text="Ex: Produto comprado com desconto", width=600)
 
 lbl_status = ft.Text(value="", color=ft.Colors.GREEN)
 
@@ -135,29 +218,28 @@ def editar_insumo(page: ft.Page):
     return ft.Container( 
         ft.Stack(
             controls=[
-                ft.Image(src="desfoque.png", expand=True, filter_quality=ft.FilterQuality.LOW),
                 ft.Container(
-                    height=600,
-                    width=600,
+                    height=630,
+                    width=960,
                     padding=20,
                     bgcolor="white",
-                    top=60,
-                    left=400,
+                    top=20,
+                    left=40,
                     border_radius=10,
                     shadow=ft.BoxShadow(
-                        spread_radius=1, blur_radius=10, color=ft.Colors.BLACK,
-                        offset=ft.Offset(0, 1),
+                        spread_radius=1, blur_radius=3, color=ft.Colors.GREY,
+                        offset=ft.Offset(1, 1),          
                     ),
                     content=ft.Column(
                         scroll=ft.ScrollMode.ALWAYS,
                         controls=[
-                            ft.Row(controls=[buscar_insumo()], alignment=ft.MainAxisAlignment.CENTER),
+                            ft.Row(controls=[buscar_insumo()]),
                             ft.Row(
                                 controls=[
                                     ft.Text("Medida:", weight=ft.FontWeight.BOLD),
-                                    ft.Text("Custo:", weight=ft.FontWeight.BOLD),
-                                    ft.Text("quantidade:", weight=ft.FontWeight.BOLD),
-                                ], spacing=145
+                                    ft.Text(" Custo:", weight=ft.FontWeight.BOLD),
+                                    ft.Text("  Quantidade:", weight=ft.FontWeight.BOLD),
+                                ], spacing=250
                             ),
                             ft.Row(
                                 controls=[
@@ -170,8 +252,8 @@ def editar_insumo(page: ft.Page):
                                 controls=[
                                     ft.Text("Fornecedor:", weight=ft.FontWeight.BOLD),
                                     ft.Text("Telefone:", weight=ft.FontWeight.BOLD),
-                                    ft.Text("E-Mail:", weight=ft.FontWeight.BOLD)
-                                ], spacing=120
+                                    ft.Text("  E-Mail:", weight=ft.FontWeight.BOLD)
+                                ], spacing=230
                             ),
                             ft.Row(
                                 controls=[
@@ -183,41 +265,23 @@ def editar_insumo(page: ft.Page):
                             ft.Row(
                                 controls=[      
                                     ft.Text("Comentário:", weight=ft.FontWeight.BOLD),
-                                    ft.Text("Data:", weight=ft.FontWeight.BOLD)
-                                ], spacing=260),
+                                ], alignment=ft.MainAxisAlignment.CENTER),
                             ft.Row(
                                 controls=[
-                                    ft.Text(""),
                                     txt_comentario,
-                                    txt_data           
-                                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                                ], alignment=ft.MainAxisAlignment.CENTER
                             ),
                             lbl_status,
                             ft.Container(
                                 content=ft.Row(
                                     controls=[
-                                        ft.Button("Excluir", on_click=clicar_deletar),
-                                        ft.Button("Cancelar"),
-                                        ft.Button("Salvar", on_click=lambda e: salvar_alteracoes_insumo(
-                                        e, 
-                                        txt_buscar_insumo, 
-                                        nome_selecionado_insumo, 
-                                        lbl_status, 
-                                        txt_uni_medi,
-                                        txt_qtd,
-                                        txt_data,
-                                        txt_fornecedor,
-                                        txt_telefone,
-                                        txt_email,
-                                        txt_comentario,
-                                        txt_custo
-
-                                        ))
+                                        btn_excluir,
+                                        btn_salvar,
                                     ],                                     
                                     alignment=ft.CrossAxisAlignment.END
                                 ), padding=10
                             )                              
-                        ], alignment=ft.MainAxisAlignment.CENTER                
+                        ]               
                     )                     
                 ),
             ]

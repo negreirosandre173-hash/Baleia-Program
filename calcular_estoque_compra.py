@@ -72,17 +72,24 @@ def calcular_totais(e):
 def adicionar_campo(e):
     novo_insumo = ft.AutoComplete(
         suggestions=sugestoes, 
-        width=200,
+        width=250,
         on_select=salvar_texto_autocomplete,
         on_change=salvar_texto_autocomplete,
         data=""
     )
-    nova_qtd = ft.TextField(width=90, on_change=validar_numeros)
-    novo_volume = ft.TextField(width=120, read_only=True, value="0.00")
-    novo_total = ft.TextField(width=120, read_only=True, value="R$ 0.00")
-    novo_total_item = ft.TextField(width=100, read_only=True, value="0")
+    nova_qtd = ft.TextField(width=112, on_change=validar_numeros)
+    novo_volume = ft.TextField(width=112, read_only=True, value="0.00")
+    novo_total = ft.TextField(width=112, read_only=True, value="R$ 0.00")
+    novo_total_item = ft.TextField(width=112, read_only=True, value="0")
+    txt_uni_medi= ft.Dropdown(   
+                            options=[
+                                    ft.dropdown.Option("KG"),
+                                    ft.dropdown.Option("UNID"),
+                                    ft.dropdown.Option("ML")
+                                     ], width=112
+                            )
     
-    nova_linha = ft.Row([novo_insumo, nova_qtd, novo_volume, novo_total, novo_total_item], spacing=25) 
+    nova_linha = ft.Row([novo_insumo, nova_qtd, txt_uni_medi, novo_volume, novo_total, novo_total_item], spacing=20) 
     
     lista_referencias_insumos.append({
         "nome": novo_insumo,
@@ -105,15 +112,23 @@ def novo_produto_clique(e):
     
     novo_nome = ft.AutoComplete(
         suggestions=sugestoes,
-        width=200,
+        width=255,
         on_select=salvar_texto_autocomplete,
         on_change=salvar_texto_autocomplete,
         data=""
     )
-    nova_qtd = ft.TextField(width=90, on_change=validar_numeros)
-    novo_volume = ft.TextField(width=120, read_only=True, value="0.00")
-    novo_total = ft.TextField(width=120, read_only=True, value="R$ 0.00")
-    novo_total_item = ft.TextField(width=100, read_only=True, value="0")
+
+    txt_uni_medi= ft.Dropdown(   
+                            options=[
+                                    ft.dropdown.Option("KG"),
+                                    ft.dropdown.Option("UNID"),
+                                    ft.dropdown.Option("ML")
+                                     ], width=112
+                            )
+    nova_qtd = ft.TextField(width=112, on_change=validar_numeros)
+    novo_volume = ft.TextField(width=112, read_only=True, value="0.00")
+    novo_total = ft.TextField(width=112, read_only=True, value="R$ 0.00")
+    novo_total_item = ft.TextField(width=112, read_only=True, value="0")
     
     lista_referencias_insumos.append({
         "nome": novo_nome,
@@ -122,30 +137,89 @@ def novo_produto_clique(e):
         "total": novo_total,
         "total_item": novo_total_item
     })
-    coluna_insumos.controls = [ft.Row([novo_nome, nova_qtd, novo_volume, novo_total, novo_total_item], spacing=25)]
+    coluna_insumos.controls = [ft.Row([novo_nome, nova_qtd, txt_uni_medi, novo_volume, novo_total, novo_total_item], spacing=20)]
     
     nome_produto.update()
     qtd_produto.update()
     semanal_produto.update()
     coluna_insumos.update()
 
-nome_produto = ft.TextField(hint_text="Ex: Cosmopolitan", width=250)
-qtd_produto = ft.TextField(hint_text="Ex: 2", width=90, on_change=validar_numeros)
-semanal_produto = ft.TextField(hint_text="Ex: 4", width=90, on_change=validar_numeros)
+nome_produto = ft.TextField(hint_text="Ex: Cosmopolitan", width=290)
+qtd_produto = ft.TextField(hint_text="Ex: 2", width=290, on_change=validar_numeros)
+semanal_produto = ft.TextField(hint_text="Ex: 4", width=290, on_change=validar_numeros)
+
+#====================================================================================================
+
+btn_calcular = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=calcular_totais,
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.CALCULATE, color="white"),
+            ft.Text("Calcular", color="white")
+        ]
+    )
+)
+
+btn_novo = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=novo_produto_clique,
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.AUTORENEW, color="white"),
+            ft.Text("Novo Produto", color="white")
+        ]
+    )
+)
+
+btn_novo_insumo = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=adicionar_campo,
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.ADD, color="white"),
+            ft.Text("Adicionar Insumo", color="white")
+        ]
+    )
+)
+#===================================================================================================
 
 def calcular_estoque_compra(page: ft.Page):
     if not coluna_insumos.controls:
         novo_nome = ft.AutoComplete(
             suggestions=sugestoes, 
-            width=200,
+            width=250,
             on_select=salvar_texto_autocomplete,
             on_change=salvar_texto_autocomplete,
             data=""
         )
-        nova_qtd = ft.TextField(width=90, on_change=validar_numeros)
-        novo_volume = ft.TextField(width=120, read_only=True, value="0.00")
-        novo_total = ft.TextField(width=120, read_only=True, value="R$ 0.00")
-        novo_total_item = ft.TextField(width=100, read_only=True, value="0")
+
+        txt_uni_medi= ft.Dropdown(   
+                            options=[
+                                    ft.dropdown.Option("KG"),
+                                    ft.dropdown.Option("UNID"),
+                                    ft.dropdown.Option("ML")
+                                     ], width=112
+                            )
+        nova_qtd = ft.TextField(width=112, on_change=validar_numeros)
+        novo_volume = ft.TextField(width=112, read_only=True, value="0.00")
+        novo_total = ft.TextField(width=112, read_only=True, value="R$ 0.00")
+        novo_total_item = ft.TextField(width=112, read_only=True, value="0")
         
         lista_referencias_insumos.append({
             "nome": novo_nome,
@@ -154,62 +228,77 @@ def calcular_estoque_compra(page: ft.Page):
             "total": novo_total,
             "total_item": novo_total_item
         })
-        coluna_insumos.controls = [ft.Row([novo_nome, nova_qtd, novo_volume, novo_total, novo_total_item], spacing=25)]
+        coluna_insumos.controls = [ft.Row(
+            [novo_nome, nova_qtd,txt_uni_medi, novo_volume, novo_total, novo_total_item]
+            , spacing=20)]
         
     return ft.Container(
         ft.Stack(
             controls=[
-                ft.Image(src="desfoque.png", expand=True, filter_quality=ft.FilterQuality.LOW),
                 ft.Container(
-                    width=780,
-                    height=600,
+                    width=960,
+                    height=640,
                     bgcolor="white",
                     padding=20,
                     border_radius=10,
-                    top=30,
-                    left=350,
-                    shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK, offset=ft.Offset(0,1)),
+                    top=20,
+                    left=40,
+                    shadow=ft.BoxShadow(spread_radius=1, blur_radius=3, color=ft.Colors.GREY, offset=ft.Offset(1,1)),
                     content=ft.Column(
                         scroll=ft.ScrollMode.ALWAYS,
                         controls=[
-                            ft.Text("Simulação de Estoque", size=35, weight=ft.FontWeight.BOLD),
-                            ft.Divider(height=10, thickness=1, color=ft.Colors.BLUE),
                             ft.Row(
                                 controls=[
-                                    ft.Text("Nome", weight=ft.FontWeight.BOLD, width=250),
-                                    ft.Text("Consumo Diário", weight=ft.FontWeight.BOLD, width=200),
-                                    ft.Text("Venda Semanal", weight=ft.FontWeight.BOLD, width=200),
-                                ],
+                                    ft.Icon(ft.Icons.ASSIGNMENT_SHARP, color="#1E3A8A", size=50),
+                                    ft.Text("Simulação de Estoque", size=28),
+                                ]
+                            ),
+
+                            ft.Divider(),
+                            ft.Row(
+                                controls=[
+                                    ft.Text("Nome", weight=ft.FontWeight.BOLD, width=290),
+                                    ft.Text("Venda Diária", weight=ft.FontWeight.BOLD, width=290),
+                                    ft.Text("Dias de Vendas", weight=ft.FontWeight.BOLD, width=290),
+                                ],alignment=ft.MainAxisAlignment.CENTER,
                                 spacing=20
                             ),
-                            ft.Row(controls=[nome_produto, qtd_produto, semanal_produto], spacing=20),
-                            ft.Container(width=100),
-                            ft.Row(
-                                controls=[
-                                    ft.Text("Projeção", weight=ft.FontWeight.BOLD, size=20),
-                                ],
-                                alignment=ft.MainAxisAlignment.CENTER
+                            ft.Row(controls=[nome_produto, qtd_produto, semanal_produto], alignment=ft.MainAxisAlignment.CENTER, spacing=20),
+                            ft.Container(height=20),
+                            ft.Container(
+                                width=920,
+                                height=50,
+                                bgcolor="#1E3A8A",
+                                border_radius=10,
+                                content=ft.Row(
+                                        controls=[
+                                            ft.Text("Projeção",size=20, color="white"),
+                                            ],
+                                            alignment=ft.MainAxisAlignment.CENTER
                             ),
+                                
+                            ),                            
+                            
                             ft.Container(width=100),
                             ft.Row(
                                 controls=[
-                                    ft.Text("Insumos:", weight=ft.FontWeight.BOLD,),
-                                    ft.Text("und/g/ml", weight=ft.FontWeight.BOLD),
-                                    ft.Text("Volume", weight=ft.FontWeight.BOLD),
-                                    ft.Text("Custo", weight=ft.FontWeight.BOLD),
-                                    ft.Text("estoque", weight=ft.FontWeight.BOLD),
-                                ],
-                                spacing=90
+                                    ft.Text("Insumos:", weight=ft.FontWeight.BOLD,width=250),
+                                    ft.Text("Quantidade", weight=ft.FontWeight.BOLD, width=112),
+                                    ft.Text("Unidade", weight=ft.FontWeight.BOLD, width=112),
+                                    ft.Text("Volume", weight=ft.FontWeight.BOLD, width=112),
+                                    ft.Text("Custo", weight=ft.FontWeight.BOLD, width=112),
+                                    ft.Text("estoque", weight=ft.FontWeight.BOLD, width=112),
+                                ], alignment=ft.MainAxisAlignment.CENTER,
+                                spacing=20
                             ),
                             coluna_insumos,
-                            ft.Button("Adicionar Insumo", on_click=adicionar_campo),
+                            btn_novo_insumo,
                             ft.Divider(),
                             ft.Container(
                                 ft.Row(
                                     controls=[
-                                        ft.Button("Novo Produto", on_click=novo_produto_clique),
-                                        ft.Button("Cancelar",),
-                                        ft.Button("Calcular", on_click=calcular_totais)
+                                        btn_novo,
+                                        btn_calcular,
                                     ],
                                     alignment=ft.MainAxisAlignment.END,
                                     spacing=10

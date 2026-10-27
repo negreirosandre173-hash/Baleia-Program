@@ -67,15 +67,49 @@ def main(page: ft.Page):
         conteudo_principal.update()
 
 
-
-    conteudo_principal = ft.Container( 
-        expand=True, 
-        height=800, 
-        bgcolor=azul_claro, 
-        content=ft.Text("Bem-vindo ao sistema", size=24, color=azul) 
+    barra_login= ft.Container(
+        width=1035,
+        height=60,
+        bgcolor="#FFFFFF",
+        content=ft.Row(
+            controls=[
+                ft.Text("|"),
+                ft.Icon(ft.Icons.ACCOUNT_CIRCLE, color=ft.Colors.PRIMARY, size=40),
+                ft.Text("")
+            ], alignment=ft.MainAxisAlignment.END 
+        )
+        
+       
     )
 
-    grid = ft.Row( 
+    conteudo_principal = ft.Container(
+    expand=True, 
+    width=1040, 
+    height=745, 
+    bgcolor="#FDFDFC",
+    content=ft.Container(
+        bgcolor="#FDFDFC",
+        width=400,
+        height=400,
+        content=ft.Column(
+            controls=[
+                ft.Image(
+                    src="loogo.png", 
+                    width=600,                       
+                    height=600,
+                ),
+                ft.Container(height=300)
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER, 
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=0
+        )
+    ),
+    )
+
+
+    grid = ft.Row(
+        margin=0, 
         controls=[ 
             ft.Container( 
                 bgcolor=azul, 
@@ -87,7 +121,7 @@ def main(page: ft.Page):
                     controls=[ 
                         ft.Row( 
                             controls=[ 
-                                ft.Image(src="baleialogo.png", width=100, margin=0), 
+                                ft.Image(src="loogo.png", width=100, margin=0, color="white"), 
                                 ft.Column( 
                                     controls=[ 
                                         ft.Text("Baleia", size=30, color="white"), 
@@ -97,6 +131,7 @@ def main(page: ft.Page):
                                 ) 
                             ] 
                         ), 
+                        ft.Container(height=30, width=20),
                         ft.Container(width=200, height=30), 
                         ft.Container(
                             padding=10, border_radius=10, width=300, height=60, 
@@ -167,10 +202,17 @@ def main(page: ft.Page):
                     margin=0, 
                     spacing=0
                 ) 
-            ), 
-            conteudo_principal 
+            ),
+            ft.Column(
+                controls=[
+                    barra_login,
+                    conteudo_principal
+                ], spacing=0
+            )
+
         ], 
-        spacing=0
+        spacing=0,
+     
     ) 
     
     page.add(grid) 

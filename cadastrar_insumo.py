@@ -72,36 +72,54 @@ def on_change_custo(e):
 #======================================================= 
 
 
-txt_nome = ft.TextField( hint_text="Ex: Açúcar", width=180)
-
-txt_codigo= ft.TextField( hint_text="Ex: 12", width=180, on_change=validar_numeros)
+txt_nome = ft.TextField( hint_text="Ex: Açúcar", width=430)
 
 txt_uni_medi= ft.Dropdown(   
                             options=[
                                     ft.dropdown.Option("KG"),
                                     ft.dropdown.Option("UNID"),
                                     ft.dropdown.Option("ML")
-                                     ], width=180
+                                     ], width=430
                             )
-txt_custo= ft.TextField(hint_text="Ex: 12,99", width=180, on_change=on_change_custo)
+txt_custo= ft.TextField(hint_text="Ex: 12,99", width=430, on_change=on_change_custo)
 
-txt_qtd = ft.TextField(label="QTD", width=180, on_change=validar_numeros)
+txt_qtd = ft.TextField(label="QTD", width=430, on_change=validar_numeros)
 
-txt_data=  ft.TextField(
-                            hint_text="DD/MM/AAAA",
-                            width=180,
-                            keyboard_type=ft.KeyboardType.NUMBER,
-                            on_change=on_change_data)
+txt_fornecedor=ft.TextField(hint_text="Ex: BaleiaLtda",width=285)
 
-txt_fornecedor=ft.TextField(hint_text="Ex: BaleiaLtda",width=180)
+txt_telefone= ft.TextField(hint_text="(61) 9 9999-9999 ", width=285, on_change=on_change_telefone)
 
-txt_telefone= ft.TextField(hint_text="(61) 9 9999-9999 ", width=180, on_change=on_change_telefone)
+txt_email=ft.TextField(hint_text="Ex: BaleiaPrograma173@gmail.com:", width=285)
 
-txt_email=ft.TextField(hint_text="Ex: BaleiaPrograma173@gmail.com:", width=180)
-
-txt_comentario=ft.TextField(hint_text="Ex: Produto comprado com desconto", width=360, )
+txt_comentario=ft.TextField(hint_text="Ex: Produto comprado com desconto", width=700, )
 
 lbl_status = ft.Text(value="", color=ft.Colors.GREEN)
+
+
+btn_salvar = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=lambda e: enviar_clicado(  e,
+                                        txt_nome,
+                                        txt_uni_medi,
+                                        txt_custo,
+                                        txt_fornecedor,
+                                        txt_telefone,
+                                        txt_email,
+                                        txt_comentario,
+                                        txt_qtd,
+                                        lbl_status),
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.SAVE, color="white"),
+            ft.Text("Salvar", color="white")
+        ]
+    )
+)
 #==========================================================================================
 
 
@@ -110,62 +128,80 @@ def cadastrar_insumo (page: ft.Page):
         ft.Stack(
            controls=[
               ft.Container(
-                height=600,
-                width=600,
+                height=640,
+                width=960,
                 padding=20,
-                bgcolor="white",
-                top= 60,
-                left=300,
+                bgcolor="#FFFFFF",
+                top= 20,
+                left=40,
                 border_radius=10,
                 shadow=ft.BoxShadow(
-                     spread_radius=1,blur_radius=10,color=ft.Colors.BLACK,
-                     offset=ft.Offset(0,1),),
+                        spread_radius=1, blur_radius=3, color=ft.Colors.GREY,
+                        offset=ft.Offset(1, 1),          
+                    ),
                      content= ft.Column(
                             scroll=ft.ScrollMode.ALWAYS,
                             controls=[
                                 ft.Row(
                                     controls=[
-                                        ft.Text(""),
-                                        ft.Text("Cadastro de Insumo", size=35,)
-                                    ], spacing = 80
+                                        ft.Icon(ft.Icons.ASSIGNMENT_SHARP, color="#1E3A8A", size=50),
+                                        ft.Column(
+                                            controls=[
+                                                ft.Text("Cadastro de Insumo", size=28),
+                                                ft.Text("Adicione um novo insumo ao seu estoque", size=13),
+                                            ], spacing=0
+                                        ),
+                                    ], spacing = 20
                                 ),
-                                ft.Divider(height=10, thickness=1,color=ft.Colors.BLUE,),
-                                ft.Row(
+                                ft.Container(
+                                    padding=20,
+                                    bgcolor="#FFFFFF",
+                                    border=ft.Border.all(width=1, color=ft.Colors.GREY),
+                                    border_radius=8,
+                                    content=ft.Column(
+                                        controls=[
+                                            ft.Row(
                                     controls=[
                                         ft.Text("Nome:",weight=ft.FontWeight.BOLD),
-                                        ft.Text("Código:", weight=ft.FontWeight.BOLD,),
-                                        ft.Text("Data:",weight=ft.FontWeight.BOLD),
-                                    ], spacing=145
+                                        ft.Text("Medida:",weight=ft.FontWeight.BOLD, ),
+                                    ], spacing=400
                                 ),
                                 ft.Row(
                                     controls=[
                                         txt_nome,
-                                        txt_codigo,
-                                        txt_data  
+                                        txt_uni_medi,
                                     ], 
                                 ),
                                 ft.Row(
                                     controls=[
-                                        ft.Text("Medida:",weight=ft.FontWeight.BOLD, ),
+                                        
                                         ft.Text("Custo:",weight=ft.FontWeight.BOLD, ),
                                         ft.Text("quantidade:",weight=ft.FontWeight.BOLD, ),
                                         
-                                    ], spacing=145
+                                    ], spacing=400
                                 ),
                                 ft.Row(
                                     controls=[
-                                        txt_uni_medi,
                                         txt_custo,
                                         txt_qtd,
-                                                                         
                                     ],
                                 ),
-                                ft.Row(
+                                        ]
+                                    )
+                                ),
+                                ft.Container(
+                                    padding=20,
+                                    bgcolor="#FFFFFF",
+                                    border=ft.Border.all(width=1, color=ft.Colors.GREY),
+                                    border_radius=8,
+                                    content=ft.Column(
+                                        controls=[
+                                            ft.Row(
                                     controls=[
                                         ft.Text("Fornecedor:", weight=ft.FontWeight.BOLD, ),
                                         ft.Text("Telefone:",weight=ft.FontWeight.BOLD, ),
                                         ft.Text("E-Mail:",weight=ft.FontWeight.BOLD, )
-                                    ], spacing=120
+                                    ], spacing=220
                                 ),
                                 ft.Row(
                                     controls=[
@@ -178,37 +214,26 @@ def cadastrar_insumo (page: ft.Page):
                                     controls=[      
                                          ft.Text(""),                                  
                                          ft.Text("Comentário:", weight=ft.FontWeight.BOLD)
-                                ], spacing=230),
+                                ], spacing=410),
                                 ft.Row(
                                     controls=[
-                                        
                                         ft.Text(""),
                                         txt_comentario,           
                                  ], spacing= 100
                                 ),
-                                lbl_status,
+                                        ]
+                                    )
+                                ),
                                 ft.Container(
                                   content=ft.Row(
                                      controls=[
-                                        ft.Button("Cancelar"),
-                                        ft.Button("Salvar", on_click=lambda e: enviar_clicado(
-                                                e,
-                                                txt_nome,
-                                                txt_codigo,
-                                                txt_uni_medi,
-                                                txt_custo,
-                                                txt_data,
-                                                txt_fornecedor,
-                                                txt_telefone,
-                                                txt_email,
-                                                txt_comentario,
-                                                txt_qtd,
-                                                lbl_status))
+                                        lbl_status,
+                                        btn_salvar
                                     ],                                     
                                       alignment=ft.CrossAxisAlignment.END
                                    ), padding=10
                                 )                              
-                            ]                  
+                            ], spacing=10                  
                         )                     
                     ),
                 ]

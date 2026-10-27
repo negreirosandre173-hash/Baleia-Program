@@ -17,7 +17,7 @@ def obter_conexao():
     )
 
 # aqui recolhe os dados para salvar
-def salvar_no_banco(nome, codigo, uni_medi, custo, data_cadastro, fornecedor, telefone, email, comentario, quantidade):
+def salvar_no_banco(nome, uni_medi, custo, fornecedor, telefone, email, comentario, quantidade):
     
     try:
         qtd_float = float(quantidade) if quantidade else 1.0
@@ -27,13 +27,13 @@ def salvar_no_banco(nome, codigo, uni_medi, custo, data_cadastro, fornecedor, te
         preco_unitario = 0.0
 
     query = """
-    INSERT INTO insumos (nome, codigo, uni_medi, custo, data_cadastro, fornecedor, telefone, email, comentario, quantidade )
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+    INSERT INTO insumos (nome, uni_medi, custo, fornecedor, telefone, email, comentario, quantidade )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
     """
     try:
         with obter_conexao() as conexao:
             with conexao.cursor() as cursor:
-                cursor.execute(query, (nome, codigo, uni_medi, custo, data_cadastro, fornecedor, telefone, email, comentario, quantidade))
+                cursor.execute(query, (nome, uni_medi, custo, fornecedor, telefone, email, comentario, quantidade))
     except Exception as erro:
         print(f"Erro ao inserir insumo: {erro}")
         raise erro
@@ -42,10 +42,8 @@ def salvar_no_banco(nome, codigo, uni_medi, custo, data_cadastro, fornecedor, te
 def enviar_clicado(
     e, 
     txt_nome,
-    txt_codigo,
     txt_uni_medi,
     txt_custo,
-    txt_data,
     txt_fornecedor,
     txt_telefone,
     txt_email,
@@ -55,17 +53,15 @@ def enviar_clicado(
 ):
     page = e.page
     nome = txt_nome.value.upper() if txt_nome.value else ""
-    codigo = txt_codigo.value
     uni_medi = txt_uni_medi.value
     custo = txt_custo.value
-    data_cadastro = txt_data.value
     fornecedor = txt_fornecedor.value.upper() if txt_fornecedor.value else ""
     telefone = txt_telefone.value
     email = txt_email.value
     comentario = txt_comentario.value
     quantidade = txt_qtd.value
 
-    if not nome or not codigo or not uni_medi or not custo or not data_cadastro:
+    if not nome or not uni_medi or not custo:
         lbl_status.value = "Preencha os campos obrigatórios!"
         lbl_status.color = ft.Colors.RED
         page.update()
@@ -74,18 +70,16 @@ def enviar_clicado(
     try:
         custo_limpo = custo.replace(".", "").replace(",", ".")
         custo_float = float(custo_limpo)
-        codigo_int = int(codigo)
 
-        salvar_no_banco(nome, codigo_int, uni_medi, custo_float, data_cadastro, fornecedor, telefone, email, comentario, quantidade)
+
+        salvar_no_banco(nome, uni_medi, custo_float, fornecedor, telefone, email, comentario, quantidade)
         
         lbl_status.value = "Insumo cadastrado!"
         lbl_status.color = ft.Colors.GREEN
         
         txt_nome.value = ""
-        txt_codigo.value = ""
         txt_uni_medi.value = None
         txt_custo.value = ""
-        txt_data.value = ""
         txt_fornecedor.value = ""
         txt_telefone.value = ""
         txt_email.value = ""
@@ -93,6 +87,7 @@ def enviar_clicado(
         txt_qtd.value = ""
 
     except Exception as erro:
+        print(f"{erro}")
         lbl_status.value = f"Erro ao salvar: {erro}"
         lbl_status.color = ft.Colors.RED
 
@@ -129,7 +124,6 @@ def obter_produtos():
 # Def que salva os dados do produto no db
 
 def salvar_dados(e, nome_produto,
-                    novo_codigo,
                     lista_referencias_insumos,
                     coluna_insumos,
                     sugestoes,
@@ -140,7 +134,6 @@ def salvar_dados(e, nome_produto,
 
     produto_final = {
         "nome": nome_produto.value.upper(),
-        "codigo": novo_codigo.value,
         "insumos": []
     }
     
@@ -168,7 +161,6 @@ def salvar_dados(e, nome_produto,
     salvar_produto(produto_final)
   
     nome_produto.value = ""
-    novo_codigo.value = ""
     lista_referencias_insumos.clear()
     coluna_insumos.controls.clear()
     
@@ -177,8 +169,8 @@ def salvar_dados(e, nome_produto,
         label="categoria", 
         options=[ft.dropdown.Option("KG"), ft.dropdown.Option("UND"), ft.dropdown.Option("ML")]
     )
+
     nova_qtd = ft.TextField(label="QTD", width=80, on_change=validar_numeros)
-    
     lista_referencias_insumos.append({
         "nome": novo_nome,
         "categoria": nova_categoria,
@@ -193,8 +185,8 @@ def salvar_dados(e, nome_produto,
 # def responsavel pelos cadastros dos produtos
 def salvar_produto(produto_dados):
     query = """
-    INSERT INTO produtos (nome_produto, novo_codigo, novo_insumo, nova_categoria, nova_qtd)
-    VALUES (%s, %s, %s, %s, %s);
+    INSERT INTO produtos (nome_produto, novo_insumo, nova_categoria, nova_qtd)
+    VALUES (%s, %s, %s, %s);
     """
     try:
         with obter_conexao() as conexao:
@@ -204,7 +196,6 @@ def salvar_produto(produto_dados):
 
                     cursor.execute(query, (
                         produto_dados["nome"],
-                        produto_dados["codigo"],
                         insumo["insumo_id"],  
                         insumo["categoria"],
                         qtd_original 
@@ -230,13 +221,13 @@ def obter_detalhes_receita_view(nome_produto):
 
 # def busca produto para edicao
 def obter_todos_produtos():
-    comando_sql_produtos = "SELECT DISTINCT novo_codigo, nome_produto FROM produtos;"
+    comando_sql_produtos = "SELECT DISTINCT nome_produto FROM produtos;"
     try:
         with obter_conexao() as conexao:
             with conexao.cursor() as cursor:
                 cursor.execute(comando_sql_produtos)
                 resultados_produtos = cursor.fetchall()
-                return [{"novo_codigo": linha[0], "nome_produto": linha[1]} for linha in resultados_produtos]
+                return [{"nome_produto": linha[0]} for linha in resultados_produtos]
     except Exception as erro:
         print(f"Erro ao buscar produtos: {erro}")
         return []
@@ -341,13 +332,11 @@ def salvar_alteracoes_insumo(e,
                             lbl_status, 
                             txt_uni_medi,
                             txt_qtd,
-                            txt_data,
                             txt_fornecedor,
                             txt_telefone,
                             txt_email,
                             txt_comentario,
                             txt_custo
-
                             ):
     page = e.page
    
@@ -380,7 +369,7 @@ def salvar_alteracoes_insumo(e,
         sql = """
             UPDATE insumos 
             SET uni_medi = %s, custo = %s, quantidade = %s, fornecedor = %s, 
-                telefone = %s, email = %s, comentario = %s, data_cadastro = %s
+                telefone = %s, email = %s, comentario = %s
             WHERE id = %s
         """
         
@@ -392,7 +381,6 @@ def salvar_alteracoes_insumo(e,
             txt_telefone.value, 
             txt_email.value, 
             txt_comentario.value,
-            txt_data.value,
             insumo_id 
         )
         
@@ -406,7 +394,7 @@ def salvar_alteracoes_insumo(e,
         
     except Exception as erro:
         print('{erro}')
-        lbl_status.value = f"Preencha os campos: medida, custo, quantidade e data"
+        lbl_status.value = f"Preencha os campos: medida, custo e quantidade"
         lbl_status.color = ft.Colors.RED
     
     page.update()

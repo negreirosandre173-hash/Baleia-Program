@@ -29,7 +29,7 @@ def tratar_selecao_insumo(e, texto_custo_medio):
     texto_custo_medio.update()
 
 def adicionar_campo(e):
-    texto_medio = ft.Text("Média: R$ 0.00", size=12, color=ft.Colors.GREY_600)
+    texto_medio = ft.Text("MÉDIA: R$ 0.00", size=12, color=ft.Colors.BLACK)
     
     novo_insumo = ft.AutoComplete(
         suggestions=sugestoes, 
@@ -37,23 +37,27 @@ def adicionar_campo(e):
         on_select=lambda e: tratar_selecao_insumo(e, texto_medio),
         on_change=lambda e: tratar_selecao_insumo(e, texto_medio)
     )
-    nova_qtd = ft.TextField( width=100)
+
+    txt_uni_medi= ft.TextField(hint_text="Ex: Gramas")
+
+    nova_qtd = ft.TextField( width=280)
     
     referencias = {
         "nome": novo_insumo,
         "qtd": nova_qtd,
+        "unid": txt_uni_medi,
         "custo_medio_visual": texto_medio 
     }
     
     botao_remover = ft.IconButton(
         icon=ft.Icons.CLOSE,
-        icon_color=ft.Colors.BLUE,
+        icon_color=ft.Colors.RED,
         tooltip="Remover Insumo",
         on_click=lambda _: deletar_linha(nova_linha, referencias)
     )
     
     bloco_insumo = ft.Column([novo_insumo, texto_medio], spacing=2)
-    nova_linha = ft.Row([bloco_insumo, nova_qtd, botao_remover], vertical_alignment=ft.CrossAxisAlignment.START)
+    nova_linha = ft.Row([bloco_insumo, nova_qtd, txt_uni_medi, botao_remover], vertical_alignment=ft.CrossAxisAlignment.START)
     
     lista_referencias_insumos.append(referencias)
     coluna_insumos.controls.append(nova_linha)
@@ -61,9 +65,47 @@ def adicionar_campo(e):
     if coluna_insumos.page:
         coluna_insumos.update()
 
+#=======================================================================================
+
+
+btn_print = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=lambda _: gerar_pdf_lista_compras(lista_referencias_insumos),
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(icon=ft.Icons.PRINT, color="white"),
+            ft.Text("Imprimir", color="white")
+        ]
+    )
+)
+
+btn_adicionar_insumo = ft.Container(
+    bgcolor="#1E3A8A",
+    width=180,
+    height=40,
+    border_radius=10,
+    on_click=adicionar_campo,
+    ink=True,
+    content=ft.Row(
+        controls=[
+            ft.Text(""),
+            ft.Icon(ft.Icons.ADD, color="white"),
+            ft.Text("Adicionar", color="white")
+        ]
+    )
+)
+
+#=============================================================================================
+
+
 def lista_de_compras(page: ft.Page):
     if not coluna_insumos.controls:
-        texto_medio_inicial = ft.Text("Média: R$ 0.00", size=12, color=ft.Colors.GREY_600)
+        texto_medio_inicial = ft.Text("MÉDIA: R$ 0.00", size=12, color=ft.Colors.BLACK)
         
         novo_nome = ft.AutoComplete(
             suggestions=sugestoes, 
@@ -71,23 +113,27 @@ def lista_de_compras(page: ft.Page):
             on_select=lambda e: tratar_selecao_insumo(e, texto_medio_inicial),
             on_change=lambda e: tratar_selecao_insumo(e, texto_medio_inicial)
         )
-        nova_qtd = ft.TextField( width=100)
+
+        txt_uni_medi= ft.TextField(hint_text="Ex: Gramas")
+
+        nova_qtd = ft.TextField( width=280)
         
         referencias_inicial = {
             "nome": novo_nome,
             "qtd": nova_qtd,
+            "unid": txt_uni_medi,
             "custo_medio_visual": texto_medio_inicial
         }
         
         botao_remover_inicial = ft.IconButton(
             icon=ft.Icons.CLOSE,
-            icon_color=ft.Colors.BLUE,
+            icon_color=ft.Colors.RED,
             tooltip="Remover Insumo",
             on_click=lambda _: deletar_linha(linha_inicial, referencias_inicial)
         )
         
         bloco_insumo_inicial = ft.Column([novo_nome, texto_medio_inicial], spacing=2)
-        linha_inicial = ft.Row([bloco_insumo_inicial, nova_qtd, botao_remover_inicial], vertical_alignment=ft.CrossAxisAlignment.START)
+        linha_inicial = ft.Row([bloco_insumo_inicial, nova_qtd, txt_uni_medi, botao_remover_inicial], vertical_alignment=ft.CrossAxisAlignment.START)
         
         lista_referencias_insumos.append(referencias_inicial)
         coluna_insumos.controls = [linha_inicial]
@@ -95,44 +141,40 @@ def lista_de_compras(page: ft.Page):
     return ft.Container(
         ft.Stack(
             controls=[
-                ft.Image(src="desfoque.png", expand=True, filter_quality=ft.FilterQuality.LOW),
                 ft.Container(
-                    width=550,
-                    height=600,
+                    width=960,
+                    height=640,
                     bgcolor="white",
                     padding=20,
                     border_radius=10,
-                    top=30,
-                    left=400,
-                    shadow=ft.BoxShadow(spread_radius=1, blur_radius=10, color=ft.Colors.BLACK, offset=ft.Offset(0,1)),
+                    top=20,
+                    left=40,
+                    shadow=ft.BoxShadow(spread_radius=1, blur_radius=3, color=ft.Colors.GREY, offset=ft.Offset(1,1)),
                     content=ft.Column(
                         scroll=ft.ScrollMode.ALWAYS,
                         controls=[
-                            ft.Text("Lista de Compras", size=35, weight=ft.FontWeight.BOLD),
-                            ft.Divider(height=10, thickness=1, color=ft.Colors.BLUE),
                             ft.Row(
                                 controls=[
-                                    ft.Text("Insumos:", weight=ft.FontWeight.BOLD),
-                                    ft.Text("Quantidade:", weight=ft.FontWeight.BOLD),
-
-                                ], spacing=230
+                                    ft.Icon(ft.Icons.ASSIGNMENT_SHARP, color="#1E3A8A", size=50),
+                                    ft.Text("Lista de Compras", size=28),
+                                    
+                                ]
+                            ),
+                            ft.Divider(height=10, thickness=1),
+                            ft.Row(
+                                controls=[
+                                    ft.Text("Insumos:", weight=ft.FontWeight.BOLD, width=280),
+                                    ft.Text("Quantidade:", weight=ft.FontWeight.BOLD, width=280),
+                                    ft.Text("Unidade:", weight=ft.FontWeight.BOLD, width=280),
+                                ]
                             ),
                             coluna_insumos,
-                            ft.Button("Adicionar Insumo", on_click=adicionar_campo),
+                            btn_adicionar_insumo,
                             ft.Divider(),
-                            ft.Container(
-                                ft.Row(
-                                    controls=[
-                                        ft.Button("Cancelar",),
-                                        ft.IconButton(
-                                            icon=ft.Icons.PRINT,
-                                            icon_color=ft.Colors.BLUE,
-                                            tooltip="Imprimir Lista em PDF",
-                                            on_click=lambda _: gerar_pdf_lista_compras(lista_referencias_insumos)
-                                        ),
-                                    ],
-                                    alignment=ft.MainAxisAlignment.END,
-                                ),
+                            ft.Row(
+                                controls=[
+                                    btn_print
+                                ], alignment=ft.MainAxisAlignment.END
                             )
                         ]
                     )

@@ -34,47 +34,78 @@ def realizar_busca_insumo(e):
         data_formatada = data_cadastro.strftime("%d/%m/%Y") if hasattr(data_cadastro, "strftime") else str(data_cadastro)
             
         componentes_resultado.extend([
-            ft.Divider(height=20, thickness=1, color=ft.Colors.GREY_300),
                 
             ft.Row(
-                controls=[ft.Text(f"{nome_selecionado_insumo.upper()}", size=20, weight="bold", color="green")],
-                alignment=ft.MainAxisAlignment.CENTER
+                margin=0,
+                controls=[
+                    ft.Container(width=20),
+                    ft.Container(
+                        width=750,
+                        bgcolor="#1E3A8A",
+                        height=70,
+                        padding=20,
+                        border_radius=10,
+                        border=ft.Border.all(width=1, color=ft.Colors.GREY),
+                        content=ft.Row(
+                            controls=[
+                                ft.Text(f"{nome_selecionado_insumo.upper()}", size=16, weight="bold", color="white"),
+                            ], alignment=ft.MainAxisAlignment.CENTER,
+                            spacing=20
+                        )
+                    ),
+                    ft.Container(width=20),
+                ],spacing=60,
+                    alignment=ft.MainAxisAlignment.CENTER
                 ),
                 
             ft.Container(
-                width=300,
-                height=400,
                 content=ft.Row(
                     controls=[
-                        ft.Column(
-                            controls=[
-                                ft.Text("Quantidade/Volume:", weight=ft.FontWeight.BOLD),
-                                ft.Text("Custo:", weight=ft.FontWeight.BOLD),
-                                ft.Text("Fornecedor:", weight=ft.FontWeight.BOLD),
-                                ft.Text("Telefone:", weight=ft.FontWeight.BOLD),
-                                ft.Text("E-mail:", weight=ft.FontWeight.BOLD),
-                                ft.Text("Data de Cadastro:", weight=ft.FontWeight.BOLD),
-                                ft.Text("Comentário:", weight=ft.FontWeight.BOLD),
-                                         ]
-                                    ),
-
-                        ft.Column(
-                            controls=[
-                                ft.Text(f"{quantidade} {uni_medi}"),
-                                ft.Text( f"R$ {custo:.2f}"),
-                                ft.Text(f"{fornecedor}"),
-                                ft.Text(f"{telefone}"),
-                                ft.Text(f"{email}"),
-                                ft.Text(f"{data_formatada}"),
-                                ft.Text(f"{comentario}"),
-                                         ]
-                                    ),
+                        ft.Container(width=20),
+                        ft.Container(
+                            width=750,
+                            height=350,
+                            border_radius=10,
+                            border=ft.Border.all(width=1, color=ft.Colors.GREY),
+                            content=ft.Row(
+                                controls=[
+                                    ft.Container(width=30),
+                                    ft.Column(
+                                        controls=[
+                                            ft.Container(height=5),
+                                            ft.Text("QUANTIDADE:", weight=ft.FontWeight.BOLD, size=16),
+                                            ft.Text("CUSTO:", weight=ft.FontWeight.BOLD, size=16),
+                                            ft.Text("FORNECEDOR:", weight=ft.FontWeight.BOLD, size=16),
+                                            ft.Text("TELEFONE:", weight=ft.FontWeight.BOLD, size=16),
+                                            ft.Text("E-MAIL:", weight=ft.FontWeight.BOLD, size=16),
+                                            ft.Text("DATA DE CADASTRO:", weight=ft.FontWeight.BOLD, size=16),
+                                            ft.Text("COMENTÁRIO:", weight=ft.FontWeight.BOLD, size=16),
+                                                ], spacing=15
+                                            ),
+                                    ft.Column(
+                                        controls=[
+                                            ft.Container(height=10),
+                                            ft.Text(f"{quantidade} {uni_medi}", size=14),
+                                            ft.Text( f"R$ {custo:.2f}", color="green", size=14),
+                                            ft.Text(f"{fornecedor}", size=14),
+                                            ft.Text(f"{telefone}", size=14),
+                                            ft.Text(f"{email}", size=14),
+                                            ft.Text(f"{data_formatada}", size=16),
+                                            ft.Text(f"{comentario}", size=14),
+                                            ], spacing=15
+                                    
+                                        ),
+                                    ft.Container(width=30),
+                                    
+                                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                            )
+                        ),
                             
-                                
-                            ], spacing=70
-                        )
-                    )
-                ])
+                     ], spacing=60
+                  )
+                )
+            ]
+        )
             
     resultado_container.controls = componentes_resultado
     
@@ -94,42 +125,61 @@ sugestoes_autocomplete_insumos = [
     for nome in dados_insumos
     ]
 
-txt_buscar_insumo = ft.AutoComplete(
-    suggestions=sugestoes_autocomplete_insumos,
-    width=400,
-    on_select=realizar_busca_insumo 
-    )
+txt_buscar_insumo = ft.AutoComplete( 
+    suggestions=sugestoes_autocomplete_insumos, 
+    width=760, 
+    on_select=realizar_busca_insumo,
+) 
+
 
 def buscar_insumo(page: ft.Page):
     return ft.Container(
         ft.Stack(
             controls=[
-                ft.Image(src="desfoque.png", filter_quality=ft.FilterQuality.LOW),
                 ft.Container(
                         padding=20,
-                        width=600,
-                        height=600, 
-                        top=50,
-                        left=455, 
+                        height=640,
+                        width=960,
+                        top= 20,
+                        left=40, 
                         bgcolor="white",
                         border_radius=10,
                         shadow=ft.BoxShadow(
-                        spread_radius=1, blur_radius=10, color=ft.Colors.BLACK,
-                        offset=ft.Offset(0, 1),          
-                    ), 
-                    content=ft.Column(
-                        controls=[
-                            ft.Text("Buscar Insumo", size=32, weight=ft.FontWeight.BOLD),
-                            ft.Row(controls=[txt_buscar_insumo], alignment=ft.MainAxisAlignment.CENTER),
-                            ft.Container(content=resultado_container, width=600, height=400, padding=0),
-                            ft.Button("Cancelar")
-                            ],
-                            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-                        ),
-                    )   
-                ]
+                        spread_radius=1, blur_radius=3, color=ft.Colors.GREY,
+                        offset=ft.Offset(1, 1),          
+                            ),
+                        content=ft.Column(
+                            controls=[
+                                ft.Row(controls=[
+                                    ft.Icon(ft.Icons.ASSIGNMENT_SHARP, color="#1E3A8A", size=50),
+                                    ft.Text("Buscar Insumo", size=28),
+                                ]),
+                                ft.Divider(),
+                                ft.Container(
+                                    width=930,
+                                    height=60,
+                                    border_radius=10,
+                                    border=ft.Border.all(width=1, color=ft.Colors.GREY),
+                                    content=ft.Row(
+                                        controls=[
+                                            ft.Icon(ft.Icons.SEARCH, color=ft.Colors.BLUE, size=25, margin=10),
+                                            ft.Row(controls=[txt_buscar_insumo], alignment=ft.MainAxisAlignment.CENTER),
+                                                ], spacing=80
+                                            )
+                                        ),
+                                ft.Container(height=20),
+                                ft.Container(content=resultado_container, 
+                                    width=600, 
+                                    height=400, 
+                                    padding=0,
+                            
+                                    ),
+                                ],
+                            ),
+                        )   
+                    ]
+                )
             )
-        )
 
 
 
